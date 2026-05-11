@@ -1,14 +1,23 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Playfair_Display, Outfit } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { I18nProvider } from '@/lib/i18n-context'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  variable: '--font-serif',
+})
+
+const outfit = Outfit({ 
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Visit Khorezm - Tourism Guide',
+  description: 'Discover the ancient heart of Uzbekistan. Explore Khiva, find accommodation, and plan your journey through Khorezm.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -35,9 +44,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="font-sans antialiased">
-        {children}
+    <html lang="en" className={`${playfair.variable} ${outfit.variable}`}>
+      <body className="font-sans antialiased bg-background text-foreground">
+        <I18nProvider>
+          {children}
+          <Toaster />
+        </I18nProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
