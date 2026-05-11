@@ -161,128 +161,22 @@ export const TRANSLATIONS: Translations = {
   },
 };
 
-// Sample hotel data with Khorezm images
-export const SAMPLE_HOTELS = [
-  {
-    id: 1,
-    name: 'Khiva Palace Hotel',
-    description: 'Luxury traditional hotel in historic Khiva',
-    price: 150,
-    rating: 4.8,
-    location: { lat: 41.3786, lng: 60.3592 },
-    images: ['/images/hotel-traditional.jpg', '/images/khiva-main.jpg'],
-    amenities: ['WiFi', 'Restaurant', 'Courtyard', 'Parking'],
-  },
-  {
-    id: 2,
-    name: 'Khorezm Heritage Inn',
-    description: 'Traditional caravanserai-style accommodation',
-    price: 120,
-    rating: 4.6,
-    location: { lat: 41.3880, lng: 60.3700 },
-    images: ['/images/caravan.jpg', '/images/bazaar.jpg'],
-    amenities: ['WiFi', 'Garden', 'Traditional Meals', 'Tours'],
-  },
-  {
-    id: 3,
-    name: 'Desert Rose Resort',
-    description: 'Modern comfort with traditional charm',
-    price: 180,
-    rating: 4.9,
-    location: { lat: 41.3700, lng: 60.3400 },
-    images: ['/images/aral-sea.jpg', '/images/hotel-traditional.jpg'],
-    amenities: ['WiFi', 'Pool', 'Restaurant', 'Spa'],
-  },
-];
-
-// Sample attractions with Khorezm images
-export const SAMPLE_ATTRACTIONS = [
-  {
-    id: 1,
-    name: 'Ichan Kala',
-    description: 'Ancient city walls and gates of Khiva',
-    location: { lat: 41.3786, lng: 60.3592 },
-    image: '/images/ichan-kala.jpg',
-    category: 'Historical Gate',
-  },
-  {
-    id: 2,
-    name: 'Juma Mosque',
-    description: 'Historic mosque with 213 wooden columns',
-    location: { lat: 41.3800, lng: 60.3600 },
-    image: '/images/juma-mosque.jpg',
-    category: 'Mosque',
-  },
-  {
-    id: 3,
-    name: 'Kalta Minor',
-    description: 'Unfinished minaret with turquoise tiles',
-    location: { lat: 41.3770, lng: 60.3580 },
-    image: '/images/kalta-minor.jpg',
-    category: 'Minaret',
-  },
-  {
-    id: 4,
-    name: 'Khan Palace',
-    description: 'Former residence of the Khan with intricate tilework',
-    location: { lat: 41.3810, lng: 60.3610 },
-    image: '/images/topkapi-palace.jpg',
-    category: 'Palace',
-  },
-  {
-    id: 5,
-    name: 'Khorezm Museum',
-    description: 'State museum showcasing regional history',
-    location: { lat: 41.3750, lng: 60.3550 },
-    image: '/images/khorezm-palace.jpg',
-    category: 'Museum',
-  },
-];
-
-// Sample transport options
-export const SAMPLE_TRANSPORT = [
-  {
-    id: 1,
-    name: 'City Taxi Service',
-    type: 'Taxi',
-    price: 5,
-    capacity: 4,
-    description: 'Quick rides around Khiva',
-    image: '/images/caravan.jpg',
-  },
-  {
-    id: 2,
-    name: 'Silk Road Tours',
-    type: 'Car Rental',
-    price: 50,
-    capacity: 5,
-    description: 'Explore the entire Khorezm region',
-    image: '/images/bazaar.jpg',
-  },
-  {
-    id: 3,
-    name: 'Desert Express',
-    type: 'Shuttle',
-    price: 15,
-    capacity: 8,
-    description: 'Group transportation to attractions',
-    image: '/images/aral-sea.jpg',
-  },
-  {
-    id: 4,
-    name: 'Regional Bus',
-    type: 'Bus',
-    price: 3,
-    capacity: 40,
-    description: 'Budget-friendly city transport',
-    image: '/images/khiva-main.jpg',
-  },
-];
-
-// Homepage slideshow images
+// Homepage slideshow uchun mahalliy rasmlar (fallback)
+// Backend cover_image qaytarganida o'rnatiladi
 export const HOMEPAGE_IMAGES = [
   '/images/khiva-main.jpg',
   '/images/juma-mosque.jpg',
   '/images/kalta-minor.jpg',
   '/images/bazaar.jpg',
 ];
+
+// Placeholder rasm fallback'lari (backenddan rasm kelmasa)
+export const FALLBACK_IMAGES = {
+  hotel: '/images/hotel-traditional.jpg',
+  attraction: '/images/khiva-main.jpg',
+  transport: '/images/caravan.jpg',
+};
+
+// Map markazi (Khorezm region)
+export const KHOREZM_CENTER: [number, number] = [41.5500, 60.6300];
+export const KHIVA_CENTER: [number, number] = [41.3786, 60.3592];

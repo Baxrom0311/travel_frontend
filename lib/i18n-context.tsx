@@ -13,35 +13,36 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('en');
-  const [mounted, setMounted] = useState(false);
+  const [language, setLanguageState] = useState<Language>('uz');
 
   // Initialize language from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('language') as Language | null;
-    if (stored && ['uz', 'en', 'ru'].includes(stored)) {
-      setLanguageState(stored);
+    try {
+      const stored = localStorage.getItem('language') as Language | null;
+      if (stored && ['uz', 'en', 'ru'].includes(stored)) {
+        setLanguageState(stored);
+      }
+    } catch {
+      // localStorage may not be available (SSR)
     }
-    setMounted(true);
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('language', lang);
+    try {
+      localStorage.setItem('language', lang);
+    } catch {
+      // ignore
+    }
   };
 
   const t = (key: string): string => {
     const translation = TRANSLATIONS[key];
     if (!translation) {
-      console.warn(`Translation key not found: ${key}`);
       return key;
     }
     return translation[language] || translation.en || key;
   };
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <I18nContext.Provider value={{ language, setLanguage, t }}>
