@@ -6,6 +6,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
 import { getAttractions } from '@/lib/api-client';
+import { SAMPLE_ATTRACTIONS } from '@/lib/constants';
 import { Attraction } from '@/lib/types';
 import { RatingStars } from '@/components/rating-stars';
 import { Button } from '@/components/ui/button';
@@ -74,12 +75,20 @@ export default function KhivaPage() {
 
   useEffect(() => {
     const loadAttractions = async () => {
-      const data = await getAttractions();
-      setAttractions(data);
-      if (data.length > 0) {
-        setSelectedAttraction(data[0]);
+      try {
+        const data = await getAttractions();
+        setAttractions(data || SAMPLE_ATTRACTIONS);
+        if ((data || SAMPLE_ATTRACTIONS).length > 0) {
+          setSelectedAttraction((data || SAMPLE_ATTRACTIONS)[0]);
+        }
+      } catch {
+        setAttractions(SAMPLE_ATTRACTIONS);
+        if (SAMPLE_ATTRACTIONS.length > 0) {
+          setSelectedAttraction(SAMPLE_ATTRACTIONS[0]);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     loadAttractions();
   }, []);

@@ -7,15 +7,12 @@ import { useI18n } from '@/lib/i18n-context';
 import { ImageSlideshow } from '@/components/image-slideshow';
 import { RatingStars } from '@/components/rating-stars';
 import { getHotels, getStats, getTransport, getAttractions } from '@/lib/api-client';
+import { SAMPLE_HOTELS, SAMPLE_TRANSPORT, HOMEPAGE_IMAGES } from '@/lib/constants';
 import { Hotel, Transport, StatsData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1488747807830-63789f68bb65?w=1200&h=600&fit=crop',
-  'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=600&fit=crop',
-];
+const HERO_IMAGES = HOMEPAGE_IMAGES;
 
 export default function Home() {
   const { t, language } = useI18n();
@@ -26,15 +23,22 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
-      const [hotelsData, transportData, statsData] = await Promise.all([
-        getHotels(),
-        getTransport(),
-        getStats(),
-      ]);
-      setHotels(hotelsData);
-      setTransport(transportData);
-      setStats(statsData);
-      setLoading(false);
+      try {
+        const [hotelsData, transportData, statsData] = await Promise.all([
+          getHotels().catch(() => SAMPLE_HOTELS),
+          getTransport().catch(() => SAMPLE_TRANSPORT),
+          getStats().catch(() => null),
+        ]);
+        setHotels(hotelsData || SAMPLE_HOTELS);
+        setTransport(transportData || SAMPLE_TRANSPORT);
+        setStats(statsData);
+        setLoading(false);
+      } catch {
+        // Use sample data as fallback
+        setHotels(SAMPLE_HOTELS);
+        setTransport(SAMPLE_TRANSPORT);
+        setLoading(false);
+      }
     };
     loadData();
   }, []);

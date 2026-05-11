@@ -5,6 +5,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
 import { getTransport } from '@/lib/api-client';
+import { SAMPLE_TRANSPORT } from '@/lib/constants';
 import { Transport } from '@/lib/types';
 import { RatingStars } from '@/components/rating-stars';
 import { Button } from '@/components/ui/button';
@@ -70,9 +71,14 @@ export default function TransportPage() {
 
   useEffect(() => {
     const loadTransport = async () => {
-      const data = await getTransport();
-      setTransport(data);
-      setLoading(false);
+      try {
+        const data = await getTransport();
+        setTransport(data || SAMPLE_TRANSPORT);
+      } catch {
+        setTransport(SAMPLE_TRANSPORT);
+      } finally {
+        setLoading(false);
+      }
     };
     loadTransport();
   }, []);

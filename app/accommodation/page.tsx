@@ -6,6 +6,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
 import { getHotels } from '@/lib/api-client';
+import { SAMPLE_HOTELS } from '@/lib/constants';
 import { Hotel } from '@/lib/types';
 import { RatingStars } from '@/components/rating-stars';
 import { Button } from '@/components/ui/button';
@@ -65,13 +66,22 @@ export default function AccommodationPage() {
 
   useEffect(() => {
     const loadHotels = async () => {
-      const data = await getHotels();
-      setHotels(data);
-      setFiltered(data);
-      if (data.length > 0) {
-        setSelectedHotel(data[0]);
+      try {
+        const data = await getHotels();
+        setHotels(data || SAMPLE_HOTELS);
+        setFiltered(data || SAMPLE_HOTELS);
+        if ((data || SAMPLE_HOTELS).length > 0) {
+          setSelectedHotel((data || SAMPLE_HOTELS)[0]);
+        }
+      } catch {
+        setHotels(SAMPLE_HOTELS);
+        setFiltered(SAMPLE_HOTELS);
+        if (SAMPLE_HOTELS.length > 0) {
+          setSelectedHotel(SAMPLE_HOTELS[0]);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     loadHotels();
   }, []);
