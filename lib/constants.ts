@@ -161,22 +161,22 @@ export const TRANSLATIONS: Translations = {
   },
 };
 
-// Map coordinates for Khorezm
-export const KHOREZM_CENTER = {
-  lat: 41.5968,
-  lng: 60.6248,
+// Homepage slideshow uchun mahalliy rasmlar (fallback)
+// Backend cover_image qaytarganida o'rnatiladi
+export const HOMEPAGE_IMAGES = [
+  '/images/khiva-main.jpg',
+  '/images/juma-mosque.jpg',
+  '/images/kalta-minor.jpg',
+  '/images/bazaar.jpg',
+];
+
+// Placeholder rasm fallback'lari (backenddan rasm kelmasa)
+export const FALLBACK_IMAGES = {
+  hotel: '/images/hotel-traditional.jpg',
+  attraction: '/images/khiva-main.jpg',
+  transport: '/images/caravan.jpg',
 };
 
-export const KHIVA_CENTER = {
-  lat: 41.3786,
-  lng: 60.3592,
-};
-
-// Theme colors
-export const THEME = {
-  primary: '#d4a843', // Amber
-  dark: '#0f0e0a', // Dark background
-  secondary: '#1a1815',
-  accent: '#f5f5f0', // Light text
-  border: '#2a2823',
-} as const;
+// Map markazi (Khorezm region)
+export const KHOREZM_CENTER: [number, number] = [41.5500, 60.6300];
+export const KHIVA_CENTER: [number, number] = [41.3786, 60.3592];
