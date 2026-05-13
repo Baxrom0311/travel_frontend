@@ -16,6 +16,7 @@ import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { TiltCard } from '@/components/tilt-card';
 import { NearestPlaces, NearestItem } from '@/components/nearest-places';
+import { CompareButton } from '@/components/compare-button';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -139,7 +140,8 @@ export default function AccommodationPage() {
                 <StaggerItem key={h.id}>
                   <TiltCard max={8} scale={1.02}>
                     <div className="glass-card rounded-2xl overflow-hidden group relative">
-                  <div className="absolute top-3 right-3 z-10">
+                  <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
+                    <CompareButton id={h.id} />
                     <FavoriteButton
                       type="hotel"
                       id={h.id}

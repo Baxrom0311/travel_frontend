@@ -14,6 +14,8 @@ import { CustomCursor } from '@/components/custom-cursor';
 import { LiveChat } from '@/components/live-chat';
 import { SoundProvider } from '@/components/sound-provider';
 import { ParticlesBackground } from '@/components/particles-background';
+import { TravelTools } from '@/components/travel-tools';
+import { CompareBar } from '@/components/compare-bar';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -121,6 +123,8 @@ export default function RootLayout({
               <ScrollProgress />
               <PageTransition>{children}</PageTransition>
               <LiveChat />
+              <TravelTools />
+              <CompareBar />
               <BackToTop />
               <Toaster />
               <ServerStatus />
