@@ -6,6 +6,7 @@ import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { ServerStatus } from '@/components/server-status';
+import { PageTransition } from '@/components/page-transition';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -106,7 +107,7 @@ export default function RootLayout({
         >
           <I18nProvider>
             <AuthProvider>
-              {children}
+              <PageTransition>{children}</PageTransition>
               <Toaster />
               <ServerStatus />
             </AuthProvider>

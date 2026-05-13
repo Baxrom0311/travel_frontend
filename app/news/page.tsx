@@ -11,6 +11,7 @@ import { getNews } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
 import { News } from '@/lib/types';
 import { Calendar, ArrowRight, Newspaper } from 'lucide-react';
+import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 
 export default function NewsPage() {
   const { language } = useI18n();
@@ -53,9 +54,11 @@ export default function NewsPage() {
             <p className="text-muted-foreground">{t.no_news}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {news.map((n) => (
-              <Link key={n.id} href={`/news/${n.slug}`} className="glass-card rounded-2xl overflow-hidden group">
+              <StaggerItem key={n.id}>
+                <HoverCard lift={-8}>
+                  <Link href={`/news/${n.slug}`} className="glass-card rounded-2xl overflow-hidden group block">
                 <div className="relative h-52 overflow-hidden">
                   <Image src={n.cover_image_url || FALLBACK_IMAGES.news} alt={n.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
                   {n.is_featured && (
@@ -71,12 +74,14 @@ export default function NewsPage() {
                   <h3 className="font-semibold text-lg mb-2 line-clamp-2">{n.title}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-3 mb-4">{n.excerpt}</p>
                   <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                    {tc.readmore} <ArrowRight size={14} />
+                    {tc.readmore} <ArrowRight size={14} strokeWidth={2.5} />
                   </span>
                 </div>
-              </Link>
+                  </Link>
+                </HoverCard>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
       </div>
 

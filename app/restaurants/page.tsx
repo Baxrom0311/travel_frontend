@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { FavoriteButton } from '@/components/favorite-button';
+import { PriceRange } from '@/components/price-range';
+import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { useI18n } from '@/lib/i18n-context';
 import { getSection } from '@/lib/translations';
 import { getRestaurants, getRestaurantOptions } from '@/lib/api-client';
@@ -116,8 +118,8 @@ export default function RestaurantsPage() {
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                         unoptimized
                       />
-                      <div className="absolute top-3 left-3 glass-strong px-3 py-1 rounded-full text-xs font-semibold">
-                        {r.price_range}
+                      <div className="absolute top-3 left-3 glass-strong px-2 py-1 rounded-full">
+                        <PriceRange range={r.price_range} size={12} />
                       </div>
                       <div className="absolute bottom-3 left-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
                         <Star size={10} className="fill-amber-500 text-amber-500" /> {r.rating}

@@ -7,6 +7,9 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { SearchBar } from '@/components/search-bar';
 import { HeroVideo } from '@/components/hero-video';
+import { FadeIn, Stagger, StaggerItem, HoverCard } from '@/components/motion';
+import { NumberCounter } from '@/components/number-counter';
+import { PriceRange } from '@/components/price-range';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
@@ -122,24 +125,29 @@ export default function Home() {
       {/* ============ CATEGORIES ============ */}
       <section className="py-20 section-bg">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
+          <FadeIn className="text-center mb-12">
             <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3">{t.categories_title}</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          </FadeIn>
+          <Stagger className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {categories.map((cat) => (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                className="glass-card rounded-2xl p-6 group"
-              >
-                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
-                  <cat.icon className="text-white" size={26} />
-                </div>
-                <h3 className="font-semibold text-lg mb-1">{cat.label}</h3>
-                <p className="text-sm text-muted-foreground">{cat.count} {cat.suffix}</p>
-              </Link>
+              <StaggerItem key={cat.href}>
+                <HoverCard>
+                  <Link
+                    href={cat.href}
+                    className="glass-card rounded-2xl p-6 group block"
+                  >
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform gradient-icon-shadow`}>
+                      <cat.icon className="text-white" size={26} strokeWidth={2.25} />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-1">{cat.label}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      <NumberCounter value={cat.count} /> {cat.suffix}
+                    </p>
+                  </Link>
+                </HoverCard>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
@@ -161,40 +169,45 @@ export default function Home() {
               {[1,2,3,4].map(i => <div key={i} className="aspect-[3/4] glass-card rounded-2xl animate-pulse" />)}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            <Stagger className="grid grid-cols-2 md:grid-cols-4 gap-5">
               {attractions.slice(0, 4).map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/khiva/${p.id}`}
-                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden"
-                >
-                  <Image
-                    src={p.cover_image || fallbackPlaceImg(p.name)}
-                    alt={p.name}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                  <div className="absolute top-4 left-4">
-                    <span className="text-3xl">{p.icon}</span>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-white font-semibold text-lg mb-1">{p.name}</h3>
-                    <p className="text-white/70 text-xs flex items-center gap-1">
-                      <MapPin size={10} /> Xiva
-                    </p>
-                  </div>
-                  {p.is_featured && (
-                    <div className="absolute top-4 right-4 glass-button px-2 py-1 rounded-full text-[10px] font-semibold text-white">
-                      <Star size={10} className="inline mr-1" />
-                      Top
-                    </div>
-                  )}
-                </Link>
+                <StaggerItem key={p.id}>
+                  <HoverCard lift={-6}>
+                    <Link
+                      href={`/khiva/${p.id}`}
+                      className="group relative aspect-[3/4] rounded-2xl overflow-hidden block"
+                    >
+                      <Image
+                        src={p.cover_image || fallbackPlaceImg(p.name)}
+                        alt={p.name}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                      {/* UNESCO badge top-left */}
+                      <div className="absolute top-3 left-3 glass-strong px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                        <Landmark size={11} strokeWidth={2.5} />
+                        UNESCO
+                      </div>
+                      {/* Top badge top-right */}
+                      {p.is_featured && (
+                        <div className="absolute top-3 right-3 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
+                          <Star size={14} className="fill-current" strokeWidth={2.5} />
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <h3 className="text-white font-serif font-bold text-lg mb-1 drop-shadow-lg">{p.name}</h3>
+                        <p className="text-white/80 text-xs flex items-center gap-1">
+                          <MapPin size={10} strokeWidth={2.5} /> Xiva, Xorazm
+                        </p>
+                      </div>
+                    </Link>
+                  </HoverCard>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           )}
         </div>
       </section>
@@ -278,38 +291,42 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               {restaurants.slice(0, 4).map((r) => (
-                <Link key={r.id} href={`/restaurants/${r.id}`} className="glass-card rounded-2xl overflow-hidden group">
-                  <div className="relative h-44 overflow-hidden">
-                    <Image
-                      src={r.cover_image || '/images/bazaar.jpg'}
-                      alt={r.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      unoptimized
-                    />
-                    <div className="absolute top-3 left-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold">
-                      {r.price_range}
-                    </div>
-                    <div className="absolute top-3 right-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <Star size={10} className="fill-amber-500 text-amber-500" /> {r.rating}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-base mb-1 line-clamp-1">{r.name}</h3>
-                    <div className="flex flex-wrap gap-1">
-                      {r.cuisines.slice(0, 2).map(c => (
-                        <span key={c.id} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                          {c.icon} {c.name}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
+                <StaggerItem key={r.id}>
+                  <HoverCard lift={-6}>
+                    <Link href={`/restaurants/${r.id}`} className="glass-card rounded-2xl overflow-hidden group block">
+                      <div className="relative h-44 overflow-hidden">
+                        <Image
+                          src={r.cover_image || '/images/bazaar.jpg'}
+                          alt={r.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 25vw"
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                          unoptimized
+                        />
+                        <div className="absolute top-3 left-3 glass-strong px-2 py-1 rounded-full">
+                          <PriceRange range={r.price_range} size={11} />
+                        </div>
+                        <div className="absolute top-3 right-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                          <Star size={10} className="fill-amber-500 text-amber-500" strokeWidth={2.5} /> {r.rating}
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-base mb-2 line-clamp-1">{r.name}</h3>
+                        <div className="flex flex-wrap gap-1">
+                          {r.cuisines.slice(0, 2).map(c => (
+                            <span key={c.id} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                              {c.icon} {c.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </Link>
+                  </HoverCard>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </div>
         </section>
       )}

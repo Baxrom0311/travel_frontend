@@ -13,6 +13,7 @@ import { formatPrice } from '@/lib/i18n-helpers';
 import { CityEnum, Hotel, HotelOptions } from '@/lib/types';
 import { Search, MapPin, Star, ArrowRight } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
+import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -115,9 +116,11 @@ export default function AccommodationPage() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground mb-4">{filtered.length} mehmonxona</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((h) => (
-                <div key={h.id} className="glass-card rounded-2xl overflow-hidden group relative">
+                <StaggerItem key={h.id}>
+                  <HoverCard lift={-8}>
+                    <div className="glass-card rounded-2xl overflow-hidden group relative">
                   <div className="absolute top-3 right-3 z-10">
                     <FavoriteButton
                       type="hotel"
@@ -163,8 +166,10 @@ export default function AccommodationPage() {
                     </div>
                   </Link>
                 </div>
+                  </HoverCard>
+                </StaggerItem>
               ))}
-            </div>
+            </Stagger>
           </>
         )}
       </div>

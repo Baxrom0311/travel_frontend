@@ -11,6 +11,7 @@ import { getEvents } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
 import { Event } from '@/lib/types';
 import { Calendar, MapPin, ArrowRight, Clock } from 'lucide-react';
+import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 
 export default function EventsPage() {
   const { language } = useI18n();
@@ -63,9 +64,11 @@ export default function EventsPage() {
             <p className="text-muted-foreground">{t.no_events}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((e) => (
-              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-2xl overflow-hidden group">
+              <StaggerItem key={e.id}>
+                <HoverCard lift={-8}>
+                  <Link href={`/events/${e.id}`} className="glass-card rounded-2xl overflow-hidden group block">
                 <div className="relative h-52 overflow-hidden">
                   <Image src={e.cover_image_url || FALLBACK_IMAGES.event} alt={e.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
                   <div className="absolute top-3 left-3 glass-strong px-3 py-2 rounded-xl text-center">
@@ -83,13 +86,15 @@ export default function EventsPage() {
                   <div className="mt-4 pt-4 border-t border-border/50 flex justify-between items-center">
                     {!e.is_free && e.price > 0 && <span className="text-primary font-bold">{new Intl.NumberFormat('uz-UZ').format(e.price)} UZS</span>}
                     <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 ml-auto">
-                      {tc.details} <ArrowRight size={14} />
+                      {tc.details} <ArrowRight size={14} strokeWidth={2.5} />
                     </span>
                   </div>
                 </div>
-              </Link>
+                  </Link>
+                </HoverCard>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
       </div>
 

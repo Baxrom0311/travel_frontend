@@ -8,6 +8,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { FavoriteButton } from '@/components/favorite-button';
 import { ReviewsSection } from '@/components/reviews-section';
+import { PriceRange } from '@/components/price-range';
 import { useI18n } from '@/lib/i18n-context';
 import { getSection } from '@/lib/translations';
 import { getRestaurantById } from '@/lib/api-client';
@@ -65,8 +66,8 @@ export default function RestaurantDetailPage({ params }: { params: Promise<{ id:
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/10] rounded-2xl overflow-hidden">
               <Image src={coverImg} alt={restaurant.name} fill className="object-cover" unoptimized priority />
-              <div className="absolute top-4 left-4 glass-strong px-4 py-2 rounded-full font-bold">
-                {restaurant.price_range}
+              <div className="absolute top-4 left-4 glass-strong px-3 py-2 rounded-full">
+                <PriceRange range={restaurant.price_range} size={14} />
               </div>
               <div className="absolute top-4 right-4 flex gap-2">
                 <div className="glass-strong px-3 py-1.5 rounded-full flex items-center gap-1 text-sm font-semibold">

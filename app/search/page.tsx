@@ -12,6 +12,7 @@ import { globalSearch } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
 import { SearchResults } from '@/lib/types';
 import { Building, Landmark, Calendar, Newspaper, Utensils, Mountain } from 'lucide-react';
+import { PriceRange } from '@/components/price-range';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -139,7 +140,11 @@ function SearchContent() {
                         </div>
                         <div className="p-4">
                           <h3 className="font-semibold line-clamp-1">{r.name}</h3>
-                          <p className="text-xs text-muted-foreground">{r.price_range} • ⭐ {r.rating}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-2">
+                            <PriceRange range={r.price_range} size={10} />
+                            <span>•</span>
+                            <span>⭐ {r.rating}</span>
+                          </p>
                         </div>
                       </Link>
                     ))}
