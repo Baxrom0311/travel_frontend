@@ -15,6 +15,8 @@ import { MapPin, Star, Clock, Ticket, ArrowLeft, Play } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
 import { ReviewsSection } from '@/components/reviews-section';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { Lightbox } from '@/components/lightbox';
+import { ShareButtons } from '@/components/share-buttons';
 
 export default function AttractionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -24,6 +26,7 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
   const [related, setRelated] = useState<Attraction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const t = getSection('khiva', language);
   const tc = getSection('common', language);
@@ -81,13 +84,14 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hero image */}
-            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden">
-              <Image src={coverImg} alt={attraction.name} fill className="object-cover" unoptimized priority />
+            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden cursor-zoom-in" onClick={() => setLightboxOpen(true)}>
+              <Image src={coverImg} alt={attraction.name} fill className="object-cover hover:scale-105 transition-transform duration-700" unoptimized priority />
               <div className="absolute top-4 left-4 glass-strong px-3 py-1.5 rounded-full text-sm font-semibold flex items-center gap-2">
                 <span className="text-2xl">{attraction.icon}</span>
                 {attraction.is_featured && <><Star size={12} className="fill-amber-500 text-amber-500" /> Featured</>}
               </div>
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <ShareButtons title={attraction.name} />
                 <FavoriteButton
                   type="attraction"
                   id={attraction.id}
@@ -98,7 +102,7 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
                 />
               </div>
               {attraction.video_url && (
-                <a href={attraction.video_url} target="_blank" className="absolute bottom-4 right-4 glass-strong px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
+                <a href={attraction.video_url} target="_blank" onClick={(e) => e.stopPropagation()} className="absolute bottom-4 right-4 glass-strong px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 hover:scale-105 transition-transform">
                   <Play size={14} fill="currentColor" /> Video
                 </a>
               )}
@@ -110,7 +114,7 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
                 {images.slice(0, 5).map((img, idx) => (
                   <button
                     key={img.id}
-                    onClick={() => setActiveImage(idx)}
+                    onClick={() => { setActiveImage(idx); setLightboxOpen(true); }}
                     className={`relative aspect-square rounded-lg overflow-hidden transition-all ${
                       activeImage === idx ? 'ring-2 ring-primary' : 'opacity-70 hover:opacity-100'
                     }`}
@@ -206,6 +210,18 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       <Footer />
+
+      {/* Lightbox */}
+      <Lightbox
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        initialIndex={activeImage}
+        images={
+          images.length > 0
+            ? images.map((img) => ({ src: img.image_url, alt: img.caption }))
+            : [{ src: coverImg, alt: attraction.name }]
+        }
+      />
     </div>
   );
 }

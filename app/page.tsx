@@ -10,6 +10,7 @@ import { HeroVideo } from '@/components/hero-video';
 import { FadeIn, Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { NumberCounter } from '@/components/number-counter';
 import { PriceRange } from '@/components/price-range';
+import { StatsSection } from '@/components/stats-section';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
@@ -150,6 +151,9 @@ export default function Home() {
           </Stagger>
         </div>
       </section>
+
+      {/* ============ STATS ============ */}
+      <StatsSection stats={stats} />
 
       {/* ============ FEATURED PLACES ============ */}
       <section className="py-20 section-bg">

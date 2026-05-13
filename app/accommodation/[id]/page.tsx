@@ -16,6 +16,8 @@ import { FALLBACK_IMAGES } from '@/lib/constants';
 import { FavoriteButton } from '@/components/favorite-button';
 import { ReviewsSection } from '@/components/reviews-section';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { Lightbox } from '@/components/lightbox';
+import { ShareButtons } from '@/components/share-buttons';
 
 export default function HotelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -25,6 +27,7 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
   const [related, setRelated] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const t = getSection('accommodation', language);
   const tc = getSection('common', language);
@@ -79,15 +82,16 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
           {/* Main */}
           <div className="lg:col-span-2 space-y-6">
             {/* Hero */}
-            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden">
-              <Image src={coverImg} alt={hotel.name} fill className="object-cover" unoptimized priority />
+            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden cursor-zoom-in" onClick={() => setLightboxOpen(true)}>
+              <Image src={coverImg} alt={hotel.name} fill className="object-cover hover:scale-105 transition-transform duration-700" unoptimized priority />
               <div className="absolute top-4 left-4 glass-strong px-4 py-2 rounded-full text-sm font-semibold">
                 ★ {hotel.stars} Star
               </div>
-              <div className="absolute top-4 right-4 flex items-center gap-2">
+              <div className="absolute top-4 right-4 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                 <div className="glass-strong px-3 py-1.5 rounded-full flex items-center gap-1 text-sm font-semibold">
                   <Star size={12} className="fill-amber-500 text-amber-500" /> {hotel.rating}
                 </div>
+                <ShareButtons title={hotel.name} />
                 <FavoriteButton
                   type="hotel"
                   id={hotel.id}
@@ -105,7 +109,7 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
                 {images.slice(0, 5).map((img, idx) => (
                   <button
                     key={img.id}
-                    onClick={() => setActiveImage(idx)}
+                    onClick={() => { setActiveImage(idx); setLightboxOpen(true); }}
                     className={`relative aspect-square rounded-lg overflow-hidden ${
                       activeImage === idx ? 'ring-2 ring-primary' : 'opacity-70 hover:opacity-100'
                     }`}
@@ -202,6 +206,17 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       <Footer />
+
+      <Lightbox
+        open={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        initialIndex={activeImage}
+        images={
+          images.length > 0
+            ? images.map((img) => ({ src: img.image_url, alt: hotel.name }))
+            : [{ src: coverImg, alt: hotel.name }]
+        }
+      />
     </div>
   );
 }
