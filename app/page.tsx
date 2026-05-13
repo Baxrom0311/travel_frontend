@@ -67,7 +67,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Navbar variant="transparent" />
+      <Navbar />
 
       {/* ============ HERO ============ */}
       <section className="relative h-screen min-h-[700px] overflow-hidden">

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
@@ -12,15 +12,15 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings } from 'lucide-react';
 
 interface NavbarProps {
+  /** @deprecated - navbar always uses glass now */
   variant?: 'default' | 'transparent';
 }
 
-export function Navbar({ variant = 'default' }: NavbarProps) {
+export function Navbar({}: NavbarProps = {}) {
   const { language, setLanguage } = useI18n();
   const { user, isAuthenticated, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const nav = getSection('nav', language);
   const { count: favCount, mounted: favMounted } = useFavorites();
@@ -36,29 +36,20 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
     { href: '/map', label: nav.map },
   ];
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const isTransparent = variant === 'transparent' && !scrolled;
-
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isTransparent ? 'glass-nav-dark' : 'glass-nav'}`}>
+    <nav className="fixed top-0 left-0 right-0 z-50 nav-glass">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-2">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 ${isTransparent ? 'bg-white/20 backdrop-blur-sm' : 'bg-primary'}`}>
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
               <MapPin className="text-white" size={20} />
             </div>
             <div className="hidden sm:block">
-              <div className={`font-serif text-lg font-bold leading-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+              <div className="font-serif text-lg font-bold leading-tight text-foreground">
                 Visit Khorezm
               </div>
-              <div className={`text-[10px] uppercase tracking-wider ${isTransparent ? 'text-white/70' : 'text-muted-foreground'}`}>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Travel & Tourism
               </div>
             </div>
@@ -74,8 +65,8 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                   href={item.href}
                   className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
                     active
-                      ? isTransparent ? 'bg-white/25 text-white backdrop-blur-sm' : 'bg-primary text-primary-foreground'
-                      : isTransparent ? 'text-white/90 hover:bg-white/15' : 'text-foreground/80 hover:bg-secondary'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground/80 hover:bg-foreground/5 hover:text-foreground'
                   }`}
                 >
                   {item.label}
@@ -91,12 +82,12 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className={`flex items-center gap-2 rounded-full p-1 pr-3 transition-colors ${isTransparent ? 'glass-button' : 'bg-secondary hover:bg-primary/10'}`}
+                  className="flex items-center gap-2 rounded-full p-1 pr-3 glass-button hover:bg-foreground/5 transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
                     <User size={14} className="text-white" />
                   </div>
-                  <span className={`hidden md:inline text-sm font-medium ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+                  <span className="hidden md:inline text-sm font-medium text-foreground">
                     {user.full_name.split(' ')[0]}
                   </span>
                 </button>
@@ -108,15 +99,15 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                         <div className="font-semibold text-sm truncate">{user.full_name}</div>
                         <div className="text-xs text-muted-foreground truncate">{user.email}</div>
                       </div>
-                      <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-secondary/50 text-sm">
+                      <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-foreground/5 text-sm">
                         <Settings size={14} /> Profil
                       </Link>
-                      <Link href="/favorites" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-secondary/50 text-sm">
+                      <Link href="/favorites" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-foreground/5 text-sm">
                         <Heart size={14} /> Sevimlilar {favCount > 0 && `(${favCount})`}
                       </Link>
                       <button
                         onClick={() => { logout(); setUserMenuOpen(false); }}
-                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-50 text-sm text-red-600 border-t border-border"
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-500/10 text-sm text-red-600 dark:text-red-400 border-t border-border"
                       >
                         <LogOut size={14} /> Chiqish
                       </button>
@@ -127,22 +118,20 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
             ) : (
               <Link
                 href="/login"
-                className={`flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-semibold transition-colors ${
-                  isTransparent ? 'glass-button text-white' : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                }`}
+                className="flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <LogIn size={14} /> <span className="hidden sm:inline">Kirish</span>
               </Link>
             )}
 
-            {/* Favorites (local counter for not logged in) */}
+            {/* Favorites */}
             {favMounted && !isAuthenticated && (
               <Link
                 href="/favorites"
-                className={`relative ${isTransparent ? 'glass-button' : 'bg-secondary hover:bg-primary/10'} rounded-full p-2 transition-colors`}
+                className="relative glass-button rounded-full p-2 transition-colors"
                 aria-label="Favorites"
               >
-                <Heart size={18} className={isTransparent ? 'text-white' : 'text-foreground'} />
+                <Heart size={18} className="text-foreground" />
                 {favCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
                     {favCount > 9 ? '9+' : favCount}
@@ -152,15 +141,15 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
             )}
 
             {/* Language */}
-            <div className={`hidden sm:flex items-center gap-1 rounded-full p-1 ${isTransparent ? 'glass-button' : 'bg-secondary'}`}>
+            <div className="hidden sm:flex items-center gap-1 rounded-full p-1 glass-button">
               {LANGUAGES.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => setLanguage(lang.code)}
                   className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all ${
                     language === lang.code
-                      ? isTransparent ? 'bg-white text-primary' : 'bg-primary text-primary-foreground'
-                      : isTransparent ? 'text-white/90 hover:bg-white/15' : 'text-foreground/70 hover:bg-background'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-foreground/70 hover:bg-foreground/5'
                   }`}
                 >
                   {lang.label}
@@ -169,12 +158,12 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
             </div>
 
             {/* Theme toggle */}
-            <ThemeToggle variant={isTransparent ? 'glass' : 'default'} />
+            <ThemeToggle variant="glass" />
 
             {/* Mobile burger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`xl:hidden p-2 rounded-xl transition-colors ${isTransparent ? 'glass-button text-white' : 'bg-secondary text-foreground hover:bg-primary/10'}`}
+              className="xl:hidden p-2 rounded-xl glass-button text-foreground transition-colors"
               aria-label="Menu"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -193,7 +182,7 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                   href={item.href}
                   onClick={() => setIsOpen(false)}
                   className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    active ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-secondary'
+                    active ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'
                   }`}
                 >
                   {item.label}
@@ -203,14 +192,14 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
             <Link
               href="/faq"
               onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/faq' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-secondary'}`}
+              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/faq' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
             >
               {nav.faq}
             </Link>
             <Link
               href="/contact"
               onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/contact' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-secondary'}`}
+              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/contact' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
             >
               {nav.contact}
             </Link>
@@ -219,7 +208,7 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                 <button
                   key={lang.code}
                   onClick={() => setLanguage(lang.code)}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-lg ${language === lang.code ? 'bg-primary text-primary-foreground' : 'bg-secondary text-foreground'}`}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-lg ${language === lang.code ? 'bg-primary text-primary-foreground' : 'bg-foreground/5 text-foreground'}`}
                 >
                   {lang.label}
                 </button>
