@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Outfit } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { I18nProvider } from '@/lib/i18n-context';
+import { AuthProvider } from '@/lib/auth-context';
 import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
@@ -92,8 +93,10 @@ export default function RootLayout({
     <html lang="uz" className={`${playfair.variable} ${outfit.variable}`}>
       <body className="font-sans antialiased bg-background text-foreground">
         <I18nProvider>
-          {children}
-          <Toaster />
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
         </I18nProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useI18n } from '@/lib/i18n-context';
+import { useAuth } from '@/lib/auth-context';
 import { LANGUAGES } from '@/lib/constants';
 import { getSection } from '@/lib/translations';
 import { useFavorites } from '@/hooks/use-favorites';
-import { Menu, X, MapPin, Heart } from 'lucide-react';
+import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings } from 'lucide-react';
 
 interface NavbarProps {
   variant?: 'default' | 'transparent';
@@ -15,7 +16,9 @@ interface NavbarProps {
 
 export function Navbar({ variant = 'default' }: NavbarProps) {
   const { language, setLanguage } = useI18n();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const nav = getSection('nav', language);
@@ -82,8 +85,57 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
 
           {/* Right side */}
           <div className="flex items-center gap-2">
-            {/* Favorites */}
-            {favMounted && (
+            {/* User menu */}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className={`flex items-center gap-2 rounded-full p-1 pr-3 transition-colors ${isTransparent ? 'glass-button' : 'bg-secondary hover:bg-primary/10'}`}
+                >
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
+                    <User size={14} className="text-white" />
+                  </div>
+                  <span className={`hidden md:inline text-sm font-medium ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+                    {user.full_name.split(' ')[0]}
+                  </span>
+                </button>
+                {userMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                    <div className="absolute right-0 mt-2 w-56 glass-strong rounded-xl shadow-xl z-50 overflow-hidden">
+                      <div className="p-3 border-b border-border">
+                        <div className="font-semibold text-sm truncate">{user.full_name}</div>
+                        <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                      </div>
+                      <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-secondary/50 text-sm">
+                        <Settings size={14} /> Profil
+                      </Link>
+                      <Link href="/favorites" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-secondary/50 text-sm">
+                        <Heart size={14} /> Sevimlilar {favCount > 0 && `(${favCount})`}
+                      </Link>
+                      <button
+                        onClick={() => { logout(); setUserMenuOpen(false); }}
+                        className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-50 text-sm text-red-600 border-t border-border"
+                      >
+                        <LogOut size={14} /> Chiqish
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className={`flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-semibold transition-colors ${
+                  isTransparent ? 'glass-button text-white' : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                }`}
+              >
+                <LogIn size={14} /> <span className="hidden sm:inline">Kirish</span>
+              </Link>
+            )}
+
+            {/* Favorites (local counter for not logged in) */}
+            {favMounted && !isAuthenticated && (
               <Link
                 href="/favorites"
                 className={`relative ${isTransparent ? 'glass-button' : 'bg-secondary hover:bg-primary/10'} rounded-full p-2 transition-colors`}
