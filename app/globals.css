@@ -4,46 +4,39 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Dark Khorezm Theme */
-  --background: #0f0e0a;
-  --foreground: #f5f5f0;
-  --card: #1a1815;
-  --card-foreground: #f5f5f0;
-  --popover: #1a1815;
-  --popover-foreground: #f5f5f0;
-  --primary: #d4a843;
-  --primary-foreground: #0f0e0a;
-  --secondary: #2a2823;
-  --secondary-foreground: #f5f5f0;
-  --muted: #2a2823;
-  --muted-foreground: #999;
-  --accent: #d4a843;
-  --accent-foreground: #0f0e0a;
-  --destructive: #ff4444;
-  --destructive-foreground: #fff;
-  --border: #2a2823;
-  --input: #2a2823;
-  --ring: #d4a843;
-  --chart-1: #d4a843;
-  --chart-2: #a8845a;
-  --chart-3: #7a6a47;
-  --chart-4: #5a5a3f;
-  --chart-5: #3a3a2f;
-  --radius: 0.625rem;
-  --sidebar: #1a1815;
-  --sidebar-foreground: #f5f5f0;
-  --sidebar-primary: #d4a843;
-  --sidebar-primary-foreground: #0f0e0a;
-  --sidebar-accent: #2a2823;
-  --sidebar-accent-foreground: #f5f5f0;
-  --sidebar-border: #2a2823;
-  --sidebar-ring: #d4a843;
+  --background: #f0f7ff;
+  --foreground: #1a2332;
+  --card: #ffffff;
+  --card-foreground: #1a2332;
+  --popover: #ffffff;
+  --popover-foreground: #1a2332;
+  --primary: #0d746d;
+  --primary-foreground: #ffffff;
+  --secondary: #e8f1ee;
+  --secondary-foreground: #1a2332;
+  --muted: #eef2f5;
+  --muted-foreground: #5a6b7a;
+  --accent: #d5a642;
+  --accent-foreground: #1a2332;
+  --destructive: #c24132;
+  --destructive-foreground: #ffffff;
+  --border: rgba(13, 116, 109, 0.15);
+  --input: #ffffff;
+  --ring: #0d746d;
+  --radius: 1rem;
+
+  /* Liquid Glass variables */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-blur: 20px;
+  --glass-shadow: 0 8px 32px rgba(13, 116, 109, 0.12);
+  --glass-shadow-strong: 0 12px 40px rgba(13, 116, 109, 0.18);
 }
 
 @theme inline {
   --font-sans: var(--font-sans, 'Outfit', sans-serif);
   --font-serif: var(--font-serif, 'Playfair Display', serif);
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -63,23 +56,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -88,23 +68,187 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: 
+      radial-gradient(ellipse at top left, #dff4ff 0%, transparent 50%),
+      radial-gradient(ellipse at top right, #ffe8c8 0%, transparent 50%),
+      radial-gradient(ellipse at bottom left, #c8e7e1 0%, transparent 60%),
+      linear-gradient(180deg, #f0f7ff 0%, #f8fafc 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
   }
 }
 
-/* Leaflet overrides */
+/* ============ LIQUID GLASS ============ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-strong);
+}
+
+.glass-dark {
+  background: rgba(26, 35, 50, 0.45);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: var(--glass-bg-strong);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(13, 116, 109, 0.2);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.glass-nav-dark {
+  background: rgba(26, 35, 50, 0.35);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Liquid shine effect on hero */
+.liquid-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-shine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    125deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: liquid-shine 6s ease-in-out infinite;
+}
+
+@keyframes liquid-shine {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #0d746d 0%, #d5a642 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Floating animation */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Section backgrounds */
+.section-bg {
+  position: relative;
+}
+
+.section-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(13, 116, 109, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(213, 166, 66, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.section-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Leaflet */
 .leaflet-container {
-  background-color: #1a1815;
+  background-color: #eaf2ef;
+  border-radius: var(--radius);
 }
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  background-color: #2a2823 !important;
-  color: #d4a843 !important;
-  border: 1px solid #d4a843 !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px);
+  color: #0d746d !important;
+  border: 1px solid rgba(13, 116, 109, 0.2) !important;
 }
 
 .leaflet-control-zoom-in:hover,
 .leaflet-control-zoom-out:hover {
-  background-color: #d4a843 !important;
-  color: #0f0e0a !important;
+  background-color: #0d746d !important;
+  color: #ffffff !important;
 }
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(13, 116, 109, 0.3);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 116, 109, 0.5);
+}
+
+/* Backward compat: old classes no-op */
+.sky-background { background: transparent; }
+.sky-section { background: transparent; }
+.sky-section-alt { background: transparent; }
+.hero-pattern { display: none; }
+.heritage-pattern > * { position: relative; z-index: 1; }

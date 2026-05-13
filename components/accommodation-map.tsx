@@ -1,6 +1,7 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useEffect, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon, LatLngExpression } from 'leaflet';
 import { Hotel } from '@/lib/types';
 import { KHOREZM_CENTER } from '@/lib/constants';
@@ -26,24 +27,44 @@ interface AccommodationMapProps {
   selectedHotel: Hotel | null;
 }
 
+function MapViewUpdater({
+  center,
+  zoom,
+}: {
+  center: LatLngExpression;
+  zoom: number;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, zoom, { animate: true });
+  }, [center, map, zoom]);
+
+  return null;
+}
+
 export function AccommodationMap({
   hotels,
   selectedHotel,
 }: AccommodationMapProps) {
   const { language } = useI18n();
 
-  const center: LatLngExpression =
-    selectedHotel && selectedHotel.latitude && selectedHotel.longitude
-      ? [selectedHotel.latitude, selectedHotel.longitude]
-      : KHOREZM_CENTER;
+  const center = useMemo<LatLngExpression>(
+    () =>
+      selectedHotel && selectedHotel.latitude && selectedHotel.longitude
+        ? [selectedHotel.latitude, selectedHotel.longitude]
+        : KHOREZM_CENTER,
+    [selectedHotel?.latitude, selectedHotel?.longitude]
+  );
+  const zoom = selectedHotel ? 13 : 10;
 
   return (
     <MapContainer
       center={center}
-      zoom={selectedHotel ? 13 : 10}
+      zoom={zoom}
       style={{ height: '100%', width: '100%' }}
-      key={selectedHotel?.id || 'default'}
     >
+      <MapViewUpdater center={center} zoom={zoom} />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; OpenStreetMap contributors'

@@ -1,249 +1,131 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
-import { getAttractions, getImageUrl } from '@/lib/api-client';
-import { getLocalized } from '@/lib/i18n-helpers';
+import { getSection } from '@/lib/translations';
+import { getAttractions } from '@/lib/api-client';
 import { Attraction } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, ArrowRight } from 'lucide-react';
 
-const KhivaMap = dynamic(
-  () => import('@/components/khiva-map').then((mod) => mod.KhivaMap),
-  { ssr: false }
-);
+const PLACE_IMAGES: Record<string, string> = {
+  'Kalta Minor': '/images/kalta-minor.jpg',
+  "Ko'hna Ark": '/images/ichan-kala.jpg',
+  'Juma Masjidi': '/images/juma-mosque.jpg',
+  "Islom Xo'ja Minorasi": '/images/khiva-main.jpg',
+};
+
+function placeImg(a: Attraction): string {
+  if (a.cover_image) return a.cover_image;
+  return PLACE_IMAGES[a.name] || '/images/ichan-kala.jpg';
+}
 
 export default function KhivaPage() {
   const { language } = useI18n();
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
-  const [selectedAttraction, setSelectedAttraction] =
-    useState<Attraction | null>(null);
+  const [featuredOnly, setFeaturedOnly] = useState(false);
 
-  const translations = {
-    uz: {
-      title: 'Хива',
-      subtitle: 'Ўзбекистоннинг қадимий жавоҳири',
-      all: 'Барчаси',
-      featured: 'Асосий',
-      featured_badge: 'Тавсия этилган',
-      location: 'Жойлашув',
-      no_attractions: 'Жойлар топилмади',
-      view_on_map: 'Харитада кўриш',
-    },
-    en: {
-      title: 'Khiva',
-      subtitle: 'The Ancient Jewel of Uzbekistan',
-      all: 'All',
-      featured: 'Featured',
-      featured_badge: 'Featured',
-      location: 'Location',
-      no_attractions: 'No attractions found',
-      view_on_map: 'View on map',
-    },
-    ru: {
-      title: 'Хива',
-      subtitle: 'Древняя жемчужина Узбекистана',
-      all: 'Все',
-      featured: 'Рекомендуемые',
-      featured_badge: 'Рекомендуем',
-      location: 'Расположение',
-      no_attractions: 'Достопримечательности не найдены',
-      view_on_map: 'Посмотреть на карте',
-    },
-  };
-
-  const trans = translations[language];
+  const t = getSection('khiva', language);
+  const tc = getSection('common', language);
 
   useEffect(() => {
-    const loadAttractions = async () => {
+    (async () => {
       setLoading(true);
       const data = await getAttractions(undefined, language);
       setAttractions(data);
-      if (data.length > 0) {
-        setSelectedAttraction(data[0]);
-      }
       setLoading(false);
-    };
-    loadAttractions();
+    })();
   }, [language]);
 
-  const filtered = showFeaturedOnly
-    ? attractions.filter((a) => a.is_featured)
-    : attractions;
+  const filtered = featuredOnly ? attractions.filter((a) => a.is_featured) : attractions;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
-      {/* Hero Header */}
-      <section className="relative py-20 bg-secondary border-b border-border overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <Image
-            src="/images/khiva-main.jpg"
-            alt="Khiva"
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        </div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-serif text-4xl md:text-6xl font-bold text-foreground mb-4 text-balance">
-            {trans.title}
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground text-pretty">
-            {trans.subtitle}
-          </p>
+      {/* Hero */}
+      <section className="relative h-[450px] mt-16 overflow-hidden">
+        <Image src="/images/khiva-main.jpg" alt="Khiva" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/80" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+          <div className="glass-button inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4">
+            <span className="text-amber-400 text-xs font-semibold uppercase tracking-wider">UNESCO</span>
+          </div>
+          <h1 className="font-serif text-6xl md:text-7xl font-bold text-white mb-4">{t.title}</h1>
+          <p className="text-gray-200 text-lg max-w-2xl">{t.subtitle}</p>
         </div>
       </section>
 
-      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-200px)]">
-        {/* Left Sidebar - Attractions List */}
-        <div className="w-full lg:w-[420px] border-r border-border overflow-y-auto bg-background">
-          <div className="p-6 space-y-4">
-            {/* Filter buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant={!showFeaturedOnly ? 'default' : 'outline'}
-                onClick={() => setShowFeaturedOnly(false)}
-                size="sm"
-              >
-                {trans.all}
-              </Button>
-              <Button
-                variant={showFeaturedOnly ? 'default' : 'outline'}
-                onClick={() => setShowFeaturedOnly(true)}
-                size="sm"
-              >
-                <Star size={14} className="mr-1" />
-                {trans.featured}
-              </Button>
-            </div>
-
-            {/* Attractions list */}
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <Card key={i} className="border-border animate-pulse">
-                    <CardContent className="p-4 space-y-2">
-                      <div className="h-5 bg-muted rounded w-3/4" />
-                      <div className="h-4 bg-muted rounded w-full" />
-                      <div className="h-4 bg-muted rounded w-2/3" />
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : filtered.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                {trans.no_attractions}
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {filtered.map((attraction) => (
-                  <Card
-                    key={attraction.id}
-                    className={`cursor-pointer border transition-colors overflow-hidden ${
-                      selectedAttraction?.id === attraction.id
-                        ? 'border-primary bg-secondary'
-                        : 'border-border hover:border-primary'
-                    }`}
-                    onClick={() => setSelectedAttraction(attraction)}
-                  >
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start gap-2">
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                          <span className="text-3xl shrink-0">
-                            {attraction.icon || '📍'}
-                          </span>
-                          <div className="min-w-0">
-                            <CardTitle className="text-base text-foreground line-clamp-1">
-                              {getLocalized(attraction, 'name', language) ||
-                                attraction.name}
-                            </CardTitle>
-                          </div>
-                        </div>
-                        {attraction.is_featured && (
-                          <Badge className="bg-primary text-primary-foreground text-xs shrink-0">
-                            <Star size={10} className="mr-1" />
-                            {trans.featured_badge}
-                          </Badge>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pb-4">
-                      <p className="text-xs text-muted-foreground line-clamp-3">
-                        {getLocalized(attraction, 'description', language) ||
-                          attraction.description}
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-2">
-                        <MapPin size={12} />
-                        <span>
-                          {attraction.latitude.toFixed(4)},{' '}
-                          {attraction.longitude.toFixed(4)}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Filter */}
+        <div className="flex gap-2 mb-8 justify-center">
+          <button
+            onClick={() => setFeaturedOnly(false)}
+            className={`px-6 py-2 rounded-full font-semibold transition-all ${
+              !featuredOnly ? 'bg-primary text-primary-foreground shadow-lg' : 'glass text-foreground'
+            }`}
+          >
+            {tc.view_all || 'Hammasi'}
+          </button>
+          <button
+            onClick={() => setFeaturedOnly(true)}
+            className={`px-6 py-2 rounded-full font-semibold transition-all inline-flex items-center gap-2 ${
+              featuredOnly ? 'bg-amber-500 text-white shadow-lg' : 'glass text-foreground'
+            }`}
+          >
+            <Star size={14} /> Featured
+          </button>
         </div>
 
-        {/* Right Side - Map & Details */}
-        <div className="flex-1 flex flex-col">
-          {/* Map */}
-          <div className="flex-1 min-h-[400px] lg:min-h-0 sticky top-16">
-            {filtered.length > 0 && (
-              <KhivaMap
-                attractions={filtered}
-                selectedAttraction={selectedAttraction}
-              />
-            )}
+        {/* Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
           </div>
-
-          {/* Details Panel */}
-          {selectedAttraction && (
-            <div className="p-6 border-t border-border space-y-4 bg-secondary">
-              <div className="flex items-start gap-4">
-                <span className="text-5xl">{selectedAttraction.icon || '📍'}</span>
-                <div className="flex-1">
-                  <h2 className="font-serif text-2xl font-bold text-foreground mb-1">
-                    {getLocalized(selectedAttraction, 'name', language) ||
-                      selectedAttraction.name}
-                  </h2>
-                  {selectedAttraction.is_featured && (
-                    <Badge className="bg-primary text-primary-foreground">
-                      <Star size={12} className="mr-1" />
-                      {trans.featured_badge}
-                    </Badge>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 glass rounded-2xl">
+            <p className="text-muted-foreground">{t.no_attractions}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((a) => (
+              <Link key={a.id} href={`/khiva/${a.id}`} className="glass-card rounded-2xl overflow-hidden group">
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src={placeImg(a)}
+                    alt={a.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized
+                  />
+                  <div className="absolute top-4 left-4 text-4xl">{a.icon}</div>
+                  {a.is_featured && (
+                    <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1">
+                      <Star size={10} /> Top
+                    </div>
                   )}
                 </div>
-              </div>
-
-              <p className="text-muted-foreground leading-relaxed">
-                {getLocalized(selectedAttraction, 'description', language) ||
-                  selectedAttraction.description}
-              </p>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground border-t border-border pt-4">
-                <MapPin size={16} className="text-primary" />
-                <span>
-                  {selectedAttraction.latitude.toFixed(4)},{' '}
-                  {selectedAttraction.longitude.toFixed(4)}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
+                <div className="p-5">
+                  <h3 className="font-serif text-xl font-bold mb-2">{a.name}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4">{a.description}</p>
+                  <div className="flex items-center justify-between border-t border-border/50 pt-4">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin size={12} /> {a.latitude.toFixed(3)}, {a.longitude.toFixed(3)}
+                    </p>
+                    <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                      {tc.details} <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       <Footer />

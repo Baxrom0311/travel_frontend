@@ -1,13 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Language, Translations } from '@/lib/types';
-import { TRANSLATIONS } from '@/lib/constants';
+import { Language } from '@/lib/types';
+import { translations, getTranslation, getSection } from '@/lib/translations';
 
 interface I18nContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (section: keyof typeof translations, key: string) => string;
+  getSection: (section: keyof typeof translations) => Record<string, string>;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -15,7 +16,6 @@ const I18nContext = createContext<I18nContextType | undefined>(undefined);
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('uz');
 
-  // Initialize language from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem('language') as Language | null;
@@ -23,7 +23,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         setLanguageState(stored);
       }
     } catch {
-      // localStorage may not be available (SSR)
+      // ignore
     }
   }, []);
 
@@ -36,25 +36,21 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const t = (key: string): string => {
-    const translation = TRANSLATIONS[key];
-    if (!translation) {
-      return key;
-    }
-    return translation[language] || translation.en || key;
+  const t = (section: keyof typeof translations, key: string): string => {
+    return getTranslation(section, key, language);
   };
 
+  const getSec = (section: keyof typeof translations) => getSection(section, language);
+
   return (
-    <I18nContext.Provider value={{ language, setLanguage, t }}>
+    <I18nContext.Provider value={{ language, setLanguage, t, getSection: getSec }}>
       {children}
     </I18nContext.Provider>
   );
 }
 
 export function useI18n() {
-  const context = useContext(I18nContext);
-  if (!context) {
-    throw new Error('useI18n must be used within I18nProvider');
-  }
-  return context;
+  const ctx = useContext(I18nContext);
+  if (!ctx) throw new Error('useI18n must be used within I18nProvider');
+  return ctx;
 }

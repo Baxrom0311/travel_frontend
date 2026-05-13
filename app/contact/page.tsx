@@ -1,310 +1,132 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import Image from 'next/image';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
+import { getSection } from '@/lib/translations';
 import { submitContact } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from 'sonner';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
-
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name is too short'),
-  email: z.string().email('Invalid email'),
-  phone: z.string().min(10, 'Phone number is invalid'),
-  subject: z.string().min(5, 'Subject is too short'),
-  message: z.string().min(20, 'Message is too short'),
-});
-
-type ContactFormData = z.infer<typeof contactSchema>;
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ContactPage() {
   const { language } = useI18n();
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<null | 'success' | 'error'>(null);
+  const t = getSection('contact', language);
 
-  const translations = {
-    uz: {
-      title: 'Биз билан контакт',
-      subtitle: 'Иззалари ва ишончлилик',
-      form_title: 'Хабар юбориш',
-      name: 'Ишм',
-      email: 'Электрон почтаси',
-      phone: 'Телефон рақами',
-      subject: 'Мавзу',
-      message: 'Хабар',
-      send: 'Юбориш',
-      sending: 'Юборилмоқда...',
-      info: 'Контакт маълумоти',
-      address: 'Хива, Хорезм вилояти, Ўзбекистон',
-      phone_num: '+998 61 226 56 56',
-      email_addr: 'info@khorezm.uz',
-      hours: 'Ишчи вақти',
-      hours_desc: 'Дўмбасанбидан жўма кунигача: 09:00 - 18:00',
-      success: 'Спасибо! Ваше сообщение отправлено.',
-      error: 'Ошибка при отправке сообщения.',
-    },
-    en: {
-      title: 'Get In Touch',
-      subtitle: 'We&apos;d love to hear from you',
-      form_title: 'Send us a Message',
-      name: 'Name',
-      email: 'Email',
-      phone: 'Phone Number',
-      subject: 'Subject',
-      message: 'Message',
-      send: 'Send',
-      sending: 'Sending...',
-      info: 'Contact Information',
-      address: 'Khiva, Khorezm Region, Uzbekistan',
-      phone_num: '+998 61 226 56 56',
-      email_addr: 'info@khorezm.uz',
-      hours: 'Working Hours',
-      hours_desc: 'Monday to Friday: 09:00 - 18:00',
-      success: 'Thank you! Your message has been sent.',
-      error: 'Error sending message.',
-    },
-    ru: {
-      title: 'Свяжитесь с нами',
-      subtitle: 'Мы рады вам помочь',
-      form_title: 'Отправить сообщение',
-      name: 'Имя',
-      email: 'Электронная почта',
-      phone: 'Номер телефона',
-      subject: 'Тема',
-      message: 'Сообщение',
-      send: 'Отправить',
-      sending: 'Отправка...',
-      info: 'Контактная информация',
-      address: 'Хива, регион Хорезм, Узбекистан',
-      phone_num: '+998 61 226 56 56',
-      email_addr: 'info@khorezm.uz',
-      hours: 'Часы работы',
-      hours_desc: 'Понедельник-пятница: 09:00 - 18:00',
-      success: 'Спасибо! Ваше сообщение отправлено.',
-      error: 'Ошибка при отправке сообщения.',
-    },
-  };
-
-  const trans = translations[language];
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-  });
-
-  const onSubmit = async (data: ContactFormData) => {
-    setLoading(true);
-    const success = await submitContact(data);
-    setLoading(false);
-
-    if (success) {
-      toast.success(trans.success);
-      reset();
-    } else {
-      toast.error(trans.error);
-    }
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setResult(null);
+    const res = await submitContact(form);
+    setResult(res.success ? 'success' : 'error');
+    setSending(false);
+    if (res.success) setForm({ name: '', email: '', message: '' });
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
-      {/* Header */}
-      <section className="py-16 bg-secondary border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {trans.title}
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            {trans.subtitle}
-          </p>
+      <section className="relative h-[350px] mt-16 overflow-hidden">
+        <Image src="/images/khiva-main.jpg" alt={t.title} fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="font-serif text-5xl md:text-6xl font-bold text-white mb-4">{t.title}</h1>
+          <p className="text-gray-200 text-lg max-w-2xl">{t.subtitle}</p>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-            {/* Info Cards */}
-            <Card className="border-border">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <Mail size={24} className="text-primary" />
-                  <CardTitle className="text-lg">Email</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
-                {trans.email_addr}
-              </CardContent>
-            </Card>
-
-            <Card className="border-border">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <Phone size={24} className="text-primary" />
-                  <CardTitle className="text-lg">Phone</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
-                {trans.phone_num}
-              </CardContent>
-            </Card>
-
-            <Card className="border-border">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <MapPin size={24} className="text-primary" />
-                  <CardTitle className="text-lg">Address</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="text-muted-foreground">
-                {trans.address}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Contact Form */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Form */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="text-2xl">{trans.form_title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-foreground">
-                      {trans.name}
-                    </label>
-                    <Input
-                      {...register('name')}
-                      placeholder={trans.name}
-                      className="mt-1 bg-secondary border-border"
-                    />
-                    {errors.name && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-foreground">
-                      {trans.email}
-                    </label>
-                    <Input
-                      {...register('email')}
-                      type="email"
-                      placeholder={trans.email}
-                      className="mt-1 bg-secondary border-border"
-                    />
-                    {errors.email && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-foreground">
-                      {trans.phone}
-                    </label>
-                    <Input
-                      {...register('phone')}
-                      placeholder={trans.phone}
-                      className="mt-1 bg-secondary border-border"
-                    />
-                    {errors.phone && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-foreground">
-                      {trans.subject}
-                    </label>
-                    <Input
-                      {...register('subject')}
-                      placeholder={trans.subject}
-                      className="mt-1 bg-secondary border-border"
-                    />
-                    {errors.subject && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.subject.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-foreground">
-                      {trans.message}
-                    </label>
-                    <Textarea
-                      {...register('message')}
-                      placeholder={trans.message}
-                      rows={5}
-                      className="mt-1 bg-secondary border-border"
-                    />
-                    {errors.message && (
-                      <p className="text-xs text-destructive mt-1">
-                        {errors.message.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    {loading ? trans.sending : trans.send}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* Info */}
-            <div className="space-y-8">
-              <Card className="border-border">
-                <CardHeader>
-                  <CardTitle className="text-xl">{trans.info}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-2">
-                      {trans.hours}
-                    </h4>
-                    <p className="text-muted-foreground">{trans.hours_desc}</p>
-                  </div>
-
-                  <div className="bg-secondary p-4 rounded-lg border border-border">
-                    <p className="text-sm text-muted-foreground">
-                      {language === 'uz'
-                        ? 'Шахси битимлар учун муайян вақт олишни сўраш.'
-                        : language === 'ru'
-                          ? 'Пожалуйста, обратитесь по указанным контактам для личных встреч.'
-                          : 'Please contact us for personal meetings during business hours.'}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Info */}
+          <div className="space-y-4">
+            <h2 className="font-serif text-3xl font-bold mb-6">Get in Touch</h2>
+            <div className="glass rounded-2xl p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Mail className="text-primary" size={20} />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Email</div>
+                <div className="font-semibold">info@visitkhorezm.uz</div>
+              </div>
+            </div>
+            <div className="glass rounded-2xl p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Phone className="text-primary" size={20} />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Phone</div>
+                <div className="font-semibold">+998 61 226 56 56</div>
+              </div>
+            </div>
+            <div className="glass rounded-2xl p-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <MapPin className="text-primary" size={20} />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Address</div>
+                <div className="font-semibold">Xiva, Xorazm viloyati</div>
+              </div>
             </div>
           </div>
+
+          {/* Form */}
+          <form onSubmit={submit} className="glass-strong rounded-2xl p-8 space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">{t.name}</label>
+              <input
+                type="text"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">{t.email}</label>
+              <input
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">{t.message}</label>
+              <textarea
+                required
+                rows={5}
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl bg-white border border-border focus:border-primary outline-none resize-none"
+              />
+            </div>
+
+            {result === 'success' && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 text-green-700 rounded-xl text-sm">
+                <CheckCircle2 size={16} /> {t.success}
+              </div>
+            )}
+            {result === 'error' && (
+              <div className="flex items-center gap-2 p-3 bg-red-50 text-red-700 rounded-xl text-sm">
+                <AlertCircle size={16} /> {t.error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={sending}
+              className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Send size={16} /> {sending ? '...' : t.send}
+            </button>
+          </form>
         </div>
-      </section>
+      </div>
 
       <Footer />
     </div>

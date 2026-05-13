@@ -20,7 +20,10 @@ export function getLocalized<T extends Record<string, any>>(
 export function formatPrice(price: number, currency = 'UZS'): string {
   if (!price) return '—';
   if (currency === 'UZS') {
-    return new Intl.NumberFormat('uz-UZ').format(price) + ' so\'m';
+    const formatted = Math.round(price)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return `${formatted} so'm`;
   }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',

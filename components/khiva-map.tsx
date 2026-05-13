@@ -1,6 +1,7 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useEffect, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon, LatLngExpression } from 'leaflet';
 import { Attraction } from '@/lib/types';
 import { KHIVA_CENTER } from '@/lib/constants';
@@ -26,23 +27,36 @@ interface KhivaMapProps {
   selectedAttraction: Attraction | null;
 }
 
+function MapViewUpdater({ center }: { center: LatLngExpression }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, 15, { animate: true });
+  }, [center, map]);
+
+  return null;
+}
+
 export function KhivaMap({ attractions, selectedAttraction }: KhivaMapProps) {
   const { language } = useI18n();
 
-  const center: LatLngExpression =
-    selectedAttraction &&
-    selectedAttraction.latitude &&
-    selectedAttraction.longitude
-      ? [selectedAttraction.latitude, selectedAttraction.longitude]
-      : KHIVA_CENTER;
+  const center = useMemo<LatLngExpression>(
+    () =>
+      selectedAttraction &&
+      selectedAttraction.latitude &&
+      selectedAttraction.longitude
+        ? [selectedAttraction.latitude, selectedAttraction.longitude]
+        : KHIVA_CENTER,
+    [selectedAttraction?.latitude, selectedAttraction?.longitude]
+  );
 
   return (
     <MapContainer
       center={center}
       zoom={15}
       style={{ height: '100%', width: '100%' }}
-      key={selectedAttraction?.id || 'default'}
     >
+      <MapViewUpdater center={center} />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; OpenStreetMap contributors'

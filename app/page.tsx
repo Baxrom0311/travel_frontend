@@ -5,280 +5,245 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { SearchBar } from '@/components/search-bar';
+import { HeroVideo } from '@/components/hero-video';
 import { useI18n } from '@/lib/i18n-context';
-import { ImageSlideshow } from '@/components/image-slideshow';
-import { RatingStars } from '@/components/rating-stars';
-import {
-  getHotels,
-  getHotelStats,
-  getTransport,
-  getImageUrl,
-} from '@/lib/api-client';
-import { HOMEPAGE_IMAGES, FALLBACK_IMAGES } from '@/lib/constants';
-import { getLocalized, formatPrice } from '@/lib/i18n-helpers';
-import { Hotel, TransportRoute, StatsData } from '@/lib/types';
-import { Button } from '@/components/ui/button';
+import { getSection } from '@/lib/translations';
+import { getHomeSummary } from '@/lib/api-client';
+import { FALLBACK_IMAGES } from '@/lib/constants';
+import { formatPrice } from '@/lib/i18n-helpers';
+import { Attraction, Hotel, Event, News, Restaurant, Tour, StatsData } from '@/lib/types';
+import { Landmark, BedDouble, Bus, Calendar, Utensils, Mountain, Newspaper, MapPin, Star, ArrowRight, Clock, Users } from 'lucide-react';
 
 export default function Home() {
-  const { t, language } = useI18n();
+  const { language } = useI18n();
   const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [transport, setTransport] = useState<TransportRoute[]>([]);
+  const [attractions, setAttractions] = useState<Attraction[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [news, setNews] = useState<News[]>([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [tours, setTours] = useState<Tour[]>([]);
   const [stats, setStats] = useState<StatsData>({});
   const [loading, setLoading] = useState(true);
 
+  const t = getSection('home', language);
+  const tc = getSection('common', language);
+  const tcat = getSection('categories', language);
+
   useEffect(() => {
-    const loadData = async () => {
-      const [hotelsData, transportData, statsData] = await Promise.all([
-        getHotels({ featured: true }, language),
-        getTransport(undefined, language),
-        getHotelStats(),
-      ]);
-      setHotels(hotelsData);
-      setTransport(transportData);
-      setStats(statsData);
+    (async () => {
+      setLoading(true);
+      const data = await getHomeSummary(language);
+      setHotels(data?.featured_hotels ?? []);
+      setAttractions(data?.attractions ?? []);
+      setEvents(data?.events ?? []);
+      setNews(data?.news ?? []);
+      setRestaurants(data?.restaurants ?? []);
+      setTours(data?.tours ?? []);
+      setStats(data?.stats ?? {});
       setLoading(false);
-    };
-    loadData();
+    })();
   }, [language]);
 
-  // Slideshow uchun: hotel'lar cover_image'idan + fallback mahalliy rasmlar
-  const heroImages =
-    hotels.length > 0
-      ? hotels
-          .slice(0, 4)
-          .map((h) => getImageUrl(h.cover_image))
-          .filter(Boolean)
-      : HOMEPAGE_IMAGES;
+  const categories = [
+    { icon: Landmark, label: tcat.attractions, count: stats.total_attractions ?? 0, suffix: tcat.attractions_count, href: '/khiva', gradient: 'from-amber-500 to-orange-500' },
+    { icon: BedDouble, label: tcat.hotels, count: stats.total_hotels ?? 0, suffix: tcat.hotels_count, href: '/accommodation', gradient: 'from-blue-500 to-cyan-500' },
+    { icon: Utensils, label: 'Restoranlar', count: stats.total_restaurants ?? 0, suffix: 'ta restoran', href: '/restaurants', gradient: 'from-orange-500 to-red-500' },
+    { icon: Mountain, label: 'Turlar', count: stats.total_tours ?? 0, suffix: 'ta tur', href: '/tours', gradient: 'from-emerald-500 to-teal-500' },
+    { icon: Bus, label: tcat.transport, count: stats.transport_routes ?? 0, suffix: tcat.transport_count, href: '/transport', gradient: 'from-green-500 to-lime-500' },
+    { icon: Calendar, label: tcat.events, count: stats.total_events ?? 0, suffix: tcat.events_count, href: '/events', gradient: 'from-pink-500 to-rose-500' },
+  ];
 
-  const translations = {
-    uz: {
-      hero_explore: 'Кашф этинг',
-      stats_title: 'Рақамларда',
-      features_title: 'Нега Хоразмни танлаш керак',
-      features: [
-        { title: 'Бой маданият', desc: 'Қадимий ва замонавий меросининг уйғунлиги' },
-        { title: 'Қадимий тарих', desc: 'Минг йиллик тарихни кашф этинг' },
-        { title: 'Тажрибали гидлар', desc: 'Сафарингиз учун энг яхши гидлар' },
-        { title: 'Қулай яшаш', desc: 'Ишончли ва қулай меҳмонхоналар' },
-      ],
-      hotels: 'Меҳмонхоналар',
-      transport: 'Транспорт',
-      view_all: 'Барчасини кўриш',
-      about: 'Биз ҳақимизда',
-      about_desc:
-        'Хоразм — Ўзбекистоннинг энг қадимий ҳудуди бўлиб, бой маданият ва тарихий аҳамияти билан машҳур.',
-      about_desc2:
-        'Хоразмда қадимий шаҳарлар, саройлар ва масжидлар жойлашган бўлиб, улар унинг бой маданий меросидан далолат беради.',
-      explore_khiva: 'Хивани кашф этинг',
-      book: 'Буюртма бериш',
-      view: 'Кўриш',
-      visitors: 'Сайёҳлар',
-    },
-    en: {
-      hero_explore: 'Explore Now',
-      stats_title: 'By the Numbers',
-      features_title: 'Why Choose Khorezm',
-      features: [
-        { title: 'Rich Culture', desc: 'Blend of ancient and modern heritage' },
-        { title: 'Ancient History', desc: 'Discover millennia of history' },
-        { title: 'Expert Guides', desc: 'Best guides for your journey' },
-        { title: 'Comfortable Stay', desc: 'Reliable and comfortable hotels' },
-      ],
-      hotels: 'Hotels',
-      transport: 'Transport',
-      view_all: 'View All',
-      about: 'About Us',
-      about_desc:
-        'Khorezm is the most ancient region of Uzbekistan, famous for its rich culture and historical significance.',
-      about_desc2:
-        'Khorezm is home to ancient cities, palaces, and mosques that bear witness to its rich cultural heritage.',
-      explore_khiva: 'Explore Khiva',
-      book: 'Book',
-      view: 'View',
-      visitors: 'Visitors',
-    },
-    ru: {
-      hero_explore: 'Исследовать',
-      stats_title: 'В цифрах',
-      features_title: 'Почему выбрать Хорезм',
-      features: [
-        { title: 'Богатая культура', desc: 'Смесь древнего и современного наследия' },
-        { title: 'Древняя история', desc: 'Откройте тысячелетия истории' },
-        { title: 'Опытные гиды', desc: 'Лучшие гиды для вашего путешествия' },
-        { title: 'Комфортное проживание', desc: 'Надёжные и удобные отели' },
-      ],
-      hotels: 'Отели',
-      transport: 'Транспорт',
-      view_all: 'Посмотреть все',
-      about: 'О нас',
-      about_desc:
-        'Хорезм — самый древний регион Узбекистана, известный своей богатой культурой и историческим значением.',
-      about_desc2:
-        'В Хорезме находятся древние города, дворцы и мечети, которые свидетельствуют о его богатом культурном наследии.',
-      explore_khiva: 'Исследовать Хиву',
-      book: 'Забронировать',
-      view: 'Посмотреть',
-      visitors: 'Посетители',
-    },
+  const fallbackPlaceImg = (name: string): string => {
+    const n = name.toLowerCase();
+    if (n.includes('kalta')) return '/images/kalta-minor.jpg';
+    if (n.includes('juma')) return '/images/juma-mosque.jpg';
+    if (n.includes('ark')) return '/images/ichan-kala.jpg';
+    if (n.includes('darvoza')) return '/images/khiva-main.jpg';
+    return '/images/ichan-kala.jpg';
   };
 
-  const trans = translations[language];
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <div className="min-h-screen">
+      <Navbar variant="transparent" />
 
-      {/* Hero Section */}
-      <section className="relative h-96 md:h-[500px] bg-secondary">
-        <ImageSlideshow images={heroImages} className="h-full" />
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
-          <div className="text-center text-white space-y-4 pointer-events-auto">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-balance">
-              {t('hero.title')}
-            </h1>
-            <p className="text-lg md:text-xl text-gray-200 text-pretty">
-              {t('hero.subtitle')}
-            </p>
-            <Link href="/accommodation">
-              <Button
-                size="lg"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-              >
-                {trans.hero_explore}
-              </Button>
+      {/* ============ HERO ============ */}
+      <section className="relative h-screen min-h-[700px] overflow-hidden">
+        <HeroVideo poster="/images/khiva-main.jpg" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
+
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+          <div className="glass-button inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 animate-in fade-in duration-1000">
+            <Star size={14} className="text-amber-400" />
+            <span className="text-white/90 text-sm font-medium">{t.hero_label}</span>
+          </div>
+          
+          <h1 className="font-serif text-6xl md:text-8xl font-bold text-white mb-6 leading-none animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            {t.hero_title}
+          </h1>
+          
+          <p className="text-gray-200 text-lg md:text-xl max-w-2xl mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
+            {t.hero_subtitle}
+          </p>
+
+          <div className="w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+            <SearchBar placeholder={t.search_placeholder} size="lg" variant="glass" />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
+            <Link href="/khiva" className="px-8 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all hover:scale-105 shadow-xl">
+              {t.explore_khiva}
+            </Link>
+            <Link href="/accommodation" className="px-8 py-3 rounded-full glass-button text-white font-semibold hover:scale-105 transition-all">
+              {t.find_hotel}
             </Link>
           </div>
         </div>
-      </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-secondary border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
-            {trans.stats_title}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                {(stats.visitors ?? 10000).toLocaleString()}+
-              </div>
-              <p className="text-muted-foreground">{trans.visitors}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                {stats.hotels ?? hotels.length ?? 50}+
-              </div>
-              <p className="text-muted-foreground">{trans.hotels}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                {stats.attractions ?? 25}+
-              </div>
-              <p className="text-muted-foreground">{t('stats.attractions')}</p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
-                {stats.guides ?? 30}+
-              </div>
-              <p className="text-muted-foreground">{t('stats.guides')}</p>
-            </div>
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 animate-bounce">
+          <div className="w-5 h-8 border-2 border-current rounded-full flex justify-center pt-2">
+            <div className="w-1 h-2 bg-current rounded-full" />
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
-            {trans.features_title}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trans.features.map((feature, idx) => (
-              <div
-                key={idx}
-                className="bg-secondary border border-border rounded-lg p-6 hover:border-primary transition-colors"
+      {/* ============ CATEGORIES ============ */}
+      <section className="py-20 section-bg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold mb-3">{t.categories_title}</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((cat) => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="glass-card rounded-2xl p-6 group"
               >
-                <h3 className="text-lg font-semibold text-primary mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {feature.desc}
-                </p>
-              </div>
+                <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${cat.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <cat.icon className="text-white" size={26} />
+                </div>
+                <h3 className="font-semibold text-lg mb-1">{cat.label}</h3>
+                <p className="text-sm text-muted-foreground">{cat.count} {cat.suffix}</p>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Hotels Preview */}
-      <section className="py-16 bg-secondary border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              {trans.hotels}
-            </h2>
-            <Link href="/accommodation">
-              <Button variant="outline">{trans.view_all}</Button>
+      {/* ============ FEATURED PLACES ============ */}
+      <section className="py-20 section-bg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">{t.featured_title}</h2>
+              <p className="text-muted-foreground">UNESCO jahon merosi</p>
+            </div>
+            <Link href="/khiva" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+              {tc.view_all} <ArrowRight size={18} />
             </Link>
           </div>
+
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="bg-card border border-border rounded-lg overflow-hidden animate-pulse"
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              {[1,2,3,4].map(i => <div key={i} className="aspect-[3/4] glass-card rounded-2xl animate-pulse" />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+              {attractions.slice(0, 4).map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/khiva/${p.id}`}
+                  className="group relative aspect-[3/4] rounded-2xl overflow-hidden"
                 >
-                  <div className="h-48 bg-muted" />
-                  <div className="p-6 space-y-3">
-                    <div className="h-5 bg-muted rounded w-3/4" />
-                    <div className="h-4 bg-muted rounded w-full" />
-                    <div className="h-4 bg-muted rounded w-2/3" />
+                  <Image
+                    src={p.cover_image || fallbackPlaceImg(p.name)}
+                    alt={p.name}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="text-3xl">{p.icon}</span>
                   </div>
-                </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-white font-semibold text-lg mb-1">{p.name}</h3>
+                    <p className="text-white/70 text-xs flex items-center gap-1">
+                      <MapPin size={10} /> Xiva
+                    </p>
+                  </div>
+                  {p.is_featured && (
+                    <div className="absolute top-4 right-4 glass-button px-2 py-1 rounded-full text-[10px] font-semibold text-white">
+                      <Star size={10} className="inline mr-1" />
+                      Top
+                    </div>
+                  )}
+                </Link>
               ))}
             </div>
-          ) : hotels.length === 0 ? (
-            <p className="text-center text-muted-foreground py-12">
-              {language === 'uz'
-                ? 'Меҳмонхоналар топилмади'
-                : language === 'ru'
-                  ? 'Отели не найдены'
-                  : 'No hotels found'}
-            </p>
+          )}
+        </div>
+      </section>
+
+      {/* ============ BEST HOTELS ============ */}
+      <section className="py-20 section-bg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">{t.hotels_title}</h2>
+              <p className="text-muted-foreground">Premium mehmonxonalar</p>
+            </div>
+            <Link href="/accommodation" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+              {tc.view_all} <ArrowRight size={18} />
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1,2,3].map(i => <div key={i} className="h-80 glass-card rounded-2xl animate-pulse" />)}
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {hotels.slice(0, 3).map((hotel) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {hotels.slice(0, 3).map((h) => (
                 <Link
-                  key={hotel.id}
-                  href={`/accommodation?hotel=${hotel.id}`}
-                  className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary transition-colors group"
+                  key={h.id}
+                  href={`/accommodation/${h.id}`}
+                  className="glass-card rounded-2xl overflow-hidden group"
                 >
-                  <div className="relative h-48 bg-secondary overflow-hidden">
+                  <div className="relative h-52 overflow-hidden">
                     <Image
-                      src={getImageUrl(hotel.cover_image) || FALLBACK_IMAGES.hotel}
-                      alt={getLocalized(hotel, 'name', language) || hotel.name}
+                      src={h.cover_image || FALLBACK_IMAGES.hotel}
+                      alt={h.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
                       unoptimized
                     />
+                    <div className="absolute top-4 left-4 glass-strong px-3 py-1 rounded-full">
+                      <span className="text-sm font-semibold">★ {h.stars}</span>
+                    </div>
+                    {h.is_featured && (
+                      <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold">
+                        Featured
+                      </div>
+                    )}
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-1">
-                      {getLocalized(hotel, 'name', language) || hotel.name}
-                    </h3>
-                    <RatingStars rating={hotel.rating} className="mb-3" />
-                    <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                      {getLocalized(hotel, 'description', language) ||
-                        hotel.description}
+                  <div className="p-5">
+                    <h3 className="font-semibold text-xl mb-2 line-clamp-1">{h.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 flex items-center gap-1">
+                      <MapPin size={12} /> {h.city_label} • ⭐ {h.rating}
                     </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-primary font-semibold">
-                        {formatPrice(hotel.price_per_night)}
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="text-2xl font-bold text-primary">{formatPrice(h.price_per_night)}</div>
+                        <div className="text-xs text-muted-foreground">/ {tc.per_night}</div>
+                      </div>
+                      <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                        {tc.view} <ArrowRight size={14} />
                       </span>
-                      <Button size="sm" variant="outline">
-                        {trans.view}
-                      </Button>
                     </div>
                   </div>
                 </Link>
@@ -288,106 +253,199 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Transport Preview */}
-      <section className="py-16 border-b border-border">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-              {trans.transport}
-            </h2>
-            <Link href="/transport">
-              <Button variant="outline">{trans.view_all}</Button>
-            </Link>
-          </div>
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="bg-secondary border border-border rounded-lg p-6 animate-pulse"
-                >
-                  <div className="h-6 bg-muted rounded w-3/4 mb-3" />
-                  <div className="h-4 bg-muted rounded w-full mb-2" />
-                  <div className="h-4 bg-muted rounded w-2/3" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {transport.slice(0, 3).map((t) => (
-                <div
-                  key={t.id}
-                  className="bg-secondary border border-border rounded-lg p-6 hover:border-primary transition-colors"
-                >
-                  <div className="text-3xl mb-3">{t.icon || '🚕'}</div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {t.type_label}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-1">
-                    <span className="font-medium">
-                      {getLocalized(t, 'from_location', language) ||
-                        t.from_location}
-                    </span>
-                    {' → '}
-                    <span className="font-medium">
-                      {getLocalized(t, 'to_location', language) || t.to_location}
-                    </span>
-                  </p>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                    {getLocalized(t, 'description', language) || t.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-primary font-semibold text-sm">
-                      {t.price_label}
-                    </span>
-                    <Link href="/transport">
-                      <Button size="sm" variant="outline">
-                        {trans.book}
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="py-16 bg-secondary">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="relative h-64 md:h-96 rounded-lg overflow-hidden">
-              <Image
-                src="/images/khiva-main.jpg"
-                alt="Khiva ancient city"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {trans.about}
-              </h2>
-              <p className="text-muted-foreground mb-4 leading-relaxed">
-                {trans.about_desc}
-              </p>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                {trans.about_desc2}
-              </p>
-              <Link href="/khiva">
-                <Button
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  {trans.explore_khiva}
-                </Button>
+      {/* ============ RESTAURANTS ============ */}
+      {restaurants.length > 0 && (
+        <section className="py-20 section-bg">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">Mashhur restoranlar</h2>
+                <p className="text-muted-foreground">Xorazmning eng yaxshi taomlari</p>
+              </div>
+              <Link href="/restaurants" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+                {tc.view_all} <ArrowRight size={18} />
               </Link>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {restaurants.slice(0, 4).map((r) => (
+                <Link key={r.id} href={`/restaurants/${r.id}`} className="glass-card rounded-2xl overflow-hidden group">
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={r.cover_image || '/images/bazaar.jpg'}
+                      alt={r.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                    <div className="absolute top-3 left-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold">
+                      {r.price_range}
+                    </div>
+                    <div className="absolute top-3 right-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                      <Star size={10} className="fill-amber-500 text-amber-500" /> {r.rating}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-base mb-1 line-clamp-1">{r.name}</h3>
+                    <div className="flex flex-wrap gap-1">
+                      {r.cuisines.slice(0, 2).map(c => (
+                        <span key={c.id} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                          {c.icon} {c.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ============ TOURS ============ */}
+      {tours.length > 0 && (
+        <section className="py-20 section-bg">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">Tayyor turlar</h2>
+                <p className="text-muted-foreground">Professional gidlar bilan sayohat</p>
+              </div>
+              <Link href="/tours" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+                {tc.view_all} <ArrowRight size={18} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {tours.slice(0, 3).map((tour) => (
+                <Link key={tour.id} href={`/tours/${tour.slug}`} className="glass-card rounded-2xl overflow-hidden group">
+                  <div className="relative h-52 overflow-hidden">
+                    <Image
+                      src={tour.cover_image_url || '/images/ichan-kala.jpg'}
+                      alt={tour.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                    <div className="absolute top-3 right-3 glass-strong px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                      <Star size={10} className="fill-amber-500 text-amber-500" /> {tour.rating}
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-serif font-bold text-lg mb-2 line-clamp-1">{tour.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{tour.short_description}</p>
+                    <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-3">
+                      <span className="flex items-center gap-1"><Clock size={12} />{tour.duration} {tour.duration_type_label}</span>
+                      <span className="flex items-center gap-1"><Users size={12} />Max {tour.max_people}</span>
+                    </div>
+                    <div className="text-lg font-bold text-primary">{formatPrice(tour.price)}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ EVENTS ============ */}
+      {events.length > 0 && (
+        <section className="py-20 section-bg">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">{t.events_title}</h2>
+              </div>
+              <Link href="/events" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+                {tc.view_all} <ArrowRight size={18} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              {events.slice(0, 4).map((e) => (
+                <Link
+                  key={e.id}
+                  href={`/events/${e.id}`}
+                  className="glass-card rounded-2xl overflow-hidden group"
+                >
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={e.cover_image_url || FALLBACK_IMAGES.event}
+                      alt={e.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                    <div className="absolute top-3 left-3 glass-strong px-2 py-1 rounded-lg">
+                      <div className="text-xs font-semibold">
+                        {new Date(e.start_date).toLocaleDateString(language === 'en' ? 'en-US' : 'ru-RU', { month: 'short', day: 'numeric' })}
+                      </div>
+                    </div>
+                    {e.is_free && (
+                      <div className="absolute top-3 right-3 bg-green-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">
+                        {tc.free}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold mb-1 line-clamp-1">{e.title}</h3>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <MapPin size={10} /> {e.location}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ NEWS ============ */}
+      {news.length > 0 && (
+        <section className="py-20 section-bg">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold mb-2">{t.news_title}</h2>
+              </div>
+              <Link href="/news" className="hidden sm:flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
+                {tc.view_all} <ArrowRight size={18} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {news.slice(0, 3).map((n) => (
+                <Link
+                  key={n.id}
+                  href={`/news/${n.slug}`}
+                  className="glass-card rounded-2xl overflow-hidden group"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={n.cover_image_url || FALLBACK_IMAGES.news}
+                      alt={n.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
+                      <Newspaper size={12} />
+                      <span>{new Date(n.published_at).toLocaleDateString(language === 'en' ? 'en-US' : 'ru-RU')}</span>
+                    </div>
+                    <h3 className="font-semibold mb-2 line-clamp-2">{n.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{n.excerpt}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

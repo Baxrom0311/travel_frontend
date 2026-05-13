@@ -68,38 +68,36 @@ export function ImageSlideshow({
       {/* Controls */}
       {images.length > 1 && (
         <>
-          <button
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Previous image"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 hover:bg-black/75 text-primary"
           >
-            <Button
-              size="sm"
-              variant="secondary"
-              className="bg-black/50 hover:bg-black/75 text-primary"
-            >
-              <ChevronLeft size={20} />
-            </Button>
-          </button>
+            <ChevronLeft size={20} />
+          </Button>
 
-          <button
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Next image"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 hover:bg-black/75 text-primary"
           >
-            <Button
-              size="sm"
-              variant="secondary"
-              className="bg-black/50 hover:bg-black/75 text-primary"
-            >
-              <ChevronRight size={20} />
-            </Button>
-          </button>
+            <ChevronRight size={20} />
+          </Button>
 
           {/* Dots */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2">
             {images.map((_, index) => (
               <button
+                type="button"
                 key={index}
                 onClick={() => setCurrentIndex(index)}
+                aria-label={`Go to slide ${index + 1}`}
                 className={`w-2 h-2 rounded-full transition-all ${
                   index === currentIndex
                     ? 'bg-primary w-6'

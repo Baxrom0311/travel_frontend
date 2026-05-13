@@ -1,279 +1,164 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useI18n } from '@/lib/i18n-context';
-import { getHotels, getImageUrl } from '@/lib/api-client';
-import { getLocalized, formatPrice } from '@/lib/i18n-helpers';
+import { getSection } from '@/lib/translations';
+import { getHotels, getHotelOptions } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
-import { Hotel } from '@/lib/types';
-import { RatingStars } from '@/components/rating-stars';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
-
-const AccommodationMap = dynamic(
-  () =>
-    import('@/components/accommodation-map').then(
-      (mod) => mod.AccommodationMap
-    ),
-  { ssr: false }
-);
-
-// API'da narx UZS'da keladi. Filter uchun (min,max) ni so'm bo'yicha qo'yamiz.
-const MIN_PRICE = 0;
-const MAX_PRICE = 5_000_000; // 5 mln so'm
+import { formatPrice } from '@/lib/i18n-helpers';
+import { CityEnum, Hotel, HotelOptions } from '@/lib/types';
+import { Search, MapPin, Star, ArrowRight } from 'lucide-react';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
   const [hotels, setHotels] = useState<Hotel[]>([]);
-  const [filtered, setFiltered] = useState<Hotel[]>([]);
+  const [options, setOptions] = useState<HotelOptions | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [priceRange, setPriceRange] = useState<number[]>([MIN_PRICE, MAX_PRICE]);
-  const [minRating, setMinRating] = useState(0);
-  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
+  const [city, setCity] = useState<CityEnum | 'all'>('all');
+  const [stars, setStars] = useState<number | 'all'>('all');
 
-  const translations = {
-    uz: {
-      title: 'Меҳмонхона танлаш',
-      search: 'Қидириш...',
-      price: 'Нарх (сўм)',
-      rating: 'Баҳо',
-      amenities: 'Қулайликлар',
-      reset: 'Тозалаш',
-      no_hotels: 'Меҳмонхоналар топилмади',
-      stars: 'юлдуз',
-      per_night: '/кеча',
-    },
-    en: {
-      title: 'Find Your Hotel',
-      search: 'Search hotels...',
-      price: 'Price (UZS)',
-      rating: 'Rating',
-      amenities: 'Amenities',
-      reset: 'Reset',
-      no_hotels: 'No hotels found',
-      stars: 'stars',
-      per_night: '/night',
-    },
-    ru: {
-      title: 'Найти отель',
-      search: 'Поиск отелей...',
-      price: 'Цена (UZS)',
-      rating: 'Рейтинг',
-      amenities: 'Услуги',
-      reset: 'Сбросить',
-      no_hotels: 'Отели не найдены',
-      stars: 'звёзд',
-      per_night: '/ночь',
-    },
-  };
-
-  const trans = translations[language];
+  const t = getSection('accommodation', language);
+  const tc = getSection('common', language);
 
   useEffect(() => {
-    const loadHotels = async () => {
+    (async () => {
       setLoading(true);
-      const data = await getHotels({}, language);
+      const [data, opts] = await Promise.all([
+        getHotels({ page_size: 50 }, language),
+        getHotelOptions(language),
+      ]);
       setHotels(data);
-      setFiltered(data);
-      if (data.length > 0) {
-        setSelectedHotel(data[0]);
-      }
+      setOptions(opts);
       setLoading(false);
-    };
-    loadHotels();
+    })();
   }, [language]);
 
-  useEffect(() => {
-    const result = hotels.filter((hotel) => {
-      const name = (
-        getLocalized(hotel, 'name', language) ||
-        hotel.name ||
-        ''
-      ).toLowerCase();
-      const desc = (
-        getLocalized(hotel, 'description', language) ||
-        hotel.description ||
-        ''
-      ).toLowerCase();
-      const matchesSearch =
-        !search ||
-        name.includes(search.toLowerCase()) ||
-        desc.includes(search.toLowerCase());
-      const matchesPrice =
-        hotel.price_per_night >= priceRange[0] &&
-        hotel.price_per_night <= priceRange[1];
-      const matchesRating = hotel.rating >= minRating;
-      return matchesSearch && matchesPrice && matchesRating;
-    });
-    setFiltered(result);
-  }, [search, priceRange, minRating, hotels, language]);
-
-  const handleReset = () => {
-    setSearch('');
-    setPriceRange([MIN_PRICE, MAX_PRICE]);
-    setMinRating(0);
-  };
+  const filtered = hotels.filter((h) => {
+    if (search && !h.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (city !== 'all' && h.city !== city) return false;
+    if (stars !== 'all' && h.stars !== stars) return false;
+    return true;
+  });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
-        {/* Left Sidebar - Filters & List */}
-        <div className="w-full lg:w-[450px] border-r border-border overflow-y-auto bg-background">
-          <div className="p-6 space-y-6">
-            <h1 className="font-serif text-3xl font-bold text-foreground">
-              {trans.title}
-            </h1>
+      {/* Hero */}
+      <section className="relative h-[400px] mt-16 overflow-hidden">
+        <Image
+          src="/images/hotel-traditional.jpg"
+          alt={t.title}
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/70" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="font-serif text-5xl md:text-6xl font-bold text-white mb-4">{t.title}</h1>
+          <p className="text-gray-200 text-lg max-w-2xl">{t.subtitle}</p>
+        </div>
+      </section>
 
-            {/* Search */}
-            <Input
-              placeholder={trans.search}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-secondary border-border"
-            />
-
-            {/* Price Filter */}
-            <div>
-              <label className="text-sm font-semibold text-foreground mb-3 block">
-                {trans.price}: {formatPrice(priceRange[0])} —{' '}
-                {formatPrice(priceRange[1])}
-              </label>
-              <Slider
-                value={priceRange}
-                onValueChange={setPriceRange}
-                min={MIN_PRICE}
-                max={MAX_PRICE}
-                step={100_000}
-                className="w-full"
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        {/* Filters */}
+        <div className="glass rounded-2xl p-6 mb-8 -mt-24 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={tc.search}
+                className="w-full h-12 pl-11 pr-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm"
               />
             </div>
-
-            {/* Rating Filter */}
-            <div>
-              <label className="text-sm font-semibold text-foreground mb-3 block">
-                {trans.rating}: {minRating.toFixed(1)}+
-              </label>
-              <Slider
-                value={[minRating]}
-                onValueChange={(val) => setMinRating(val[0])}
-                min={0}
-                max={10}
-                step={0.5}
-                className="w-full"
-              />
-            </div>
-
-            <Button onClick={handleReset} variant="outline" className="w-full">
-              {trans.reset}
-            </Button>
-
-            {/* Hotels List */}
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Card key={i} className="border-border animate-pulse">
-                    <CardContent className="p-4 space-y-2">
-                      <div className="h-32 bg-muted rounded" />
-                      <div className="h-5 bg-muted rounded w-3/4" />
-                      <div className="h-4 bg-muted rounded w-full" />
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : filtered.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                {trans.no_hotels}
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {filtered.map((hotel) => (
-                  <Card
-                    key={hotel.id}
-                    className={`cursor-pointer border transition-colors overflow-hidden ${
-                      selectedHotel?.id === hotel.id
-                        ? 'border-primary bg-secondary'
-                        : 'border-border hover:border-primary'
-                    }`}
-                    onClick={() => setSelectedHotel(hotel)}
-                  >
-                    {/* Hotel image from backend */}
-                    <div className="relative w-full h-40 bg-secondary">
-                      <Image
-                        src={
-                          getImageUrl(hotel.cover_image) ||
-                          FALLBACK_IMAGES.hotel
-                        }
-                        alt={getLocalized(hotel, 'name', language) || hotel.name}
-                        fill
-                        sizes="450px"
-                        className="object-cover"
-                        unoptimized
-                      />
-                      {hotel.stars > 0 && (
-                        <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-semibold">
-                          {hotel.stars} ★
-                        </span>
-                      )}
-                    </div>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base text-foreground line-clamp-1">
-                        {getLocalized(hotel, 'name', language) || hotel.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2 pb-4">
-                      <div className="flex justify-between items-start">
-                        <RatingStars rating={hotel.rating / 2} />
-                        <span className="text-primary font-semibold text-sm">
-                          {formatPrice(hotel.price_per_night)}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {hotel.city_label} • {hotel.address_i18n || hotel.address}
-                      </p>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
-                        {getLocalized(hotel, 'description', language) ||
-                          hotel.description}
-                      </p>
-                      {hotel.amenities && hotel.amenities.length > 0 && (
-                        <div className="flex flex-wrap gap-1 pt-2">
-                          {hotel.amenities.slice(0, 4).map((a) => (
-                            <span
-                              key={a.id}
-                              className="text-xs bg-secondary border border-border rounded-full px-2 py-0.5 text-muted-foreground"
-                              title={a.name}
-                            >
-                              {a.icon}{' '}
-                              {getLocalized(a, 'name', language) || a.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+            <select
+              value={city}
+              onChange={(e) => setCity(e.target.value as CityEnum | 'all')}
+              className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm"
+            >
+              <option value="all">{t.all_cities}</option>
+              {options?.cities.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+            <select
+              value={String(stars)}
+              onChange={(e) => setStars(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm"
+            >
+              <option value="all">{t.filter_stars}</option>
+              {options?.stars.map((s) => (
+                <option key={s} value={s}>{s} ★</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Right Side - Map */}
-        <div className="flex-1 hidden lg:block sticky top-16 h-[calc(100vh-64px)]">
-          {filtered.length > 0 && (
-            <AccommodationMap
-              hotels={filtered}
-              selectedHotel={selectedHotel}
-            />
-          )}
-        </div>
+        {/* Results */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 glass rounded-2xl">
+            <p className="text-muted-foreground">{t.no_hotels}</p>
+          </div>
+        ) : (
+          <>
+            <p className="text-sm text-muted-foreground mb-4">{filtered.length} mehmonxona</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((h) => (
+                <Link
+                  key={h.id}
+                  href={`/accommodation/${h.id}`}
+                  className="glass-card rounded-2xl overflow-hidden group"
+                >
+                  <div className="relative h-52 overflow-hidden">
+                    <Image
+                      src={h.cover_image || FALLBACK_IMAGES.hotel}
+                      alt={h.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                    <div className="absolute top-3 left-3 glass-strong px-3 py-1 rounded-full text-xs font-semibold">
+                      ★ {h.stars}
+                    </div>
+                    <div className="absolute top-3 right-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                      <Star size={10} className="fill-amber-500 text-amber-500" />
+                      {h.rating}
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">{h.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-3 flex items-center gap-1">
+                      <MapPin size={12} /> {h.city_label}
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{h.description}</p>
+                    <div className="flex items-end justify-between border-t border-border/50 pt-4">
+                      <div>
+                        <div className="text-xl font-bold text-primary">{formatPrice(h.price_per_night)}</div>
+                        <div className="text-[10px] text-muted-foreground">/ {tc.per_night}</div>
+                      </div>
+                      <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                        {tc.details} <ArrowRight size={14} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <Footer />

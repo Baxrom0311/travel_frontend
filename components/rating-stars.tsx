@@ -15,17 +15,25 @@ export function RatingStars({
   size = 16,
   className = '',
 }: RatingStarsProps) {
+  const normalizedRating = Math.max(
+    0,
+    Math.min(maxRating, rating > maxRating ? (rating / 10) * maxRating : rating)
+  );
+
   return (
-    <div className={`flex gap-1 ${className}`}>
+    <div
+      className={`flex gap-1 ${className}`}
+      aria-label={`Rating ${rating.toFixed(1)}`}
+    >
       {Array.from({ length: maxRating }).map((_, index) => (
         <Star
           key={index}
           size={size}
           className={`${
-            index < Math.floor(rating)
-              ? 'fill-primary text-primary'
-              : index < rating
-                ? 'fill-primary/50 text-primary'
+            index < Math.floor(normalizedRating)
+              ? 'fill-accent text-accent'
+              : index < normalizedRating
+                ? 'fill-accent/50 text-accent'
                 : 'text-muted-foreground'
           }`}
         />
