@@ -1,10 +1,11 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { MapTileLayer } from '@/components/map-tile-layer';
 
 export interface MapItem {
   id: number | string;
@@ -78,10 +79,7 @@ export function SplitMapView({
         scrollWheelZoom={true}
         className="w-full h-full"
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; OpenStreetMap'
-        />
+        <MapTileLayer />
 
         {validItems.map((item) => {
           const icon = createMarkerIcon(item.color || markerColor, item.icon || markerEmoji);

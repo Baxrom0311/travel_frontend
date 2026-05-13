@@ -1,11 +1,12 @@
 'use client';
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import { Hotel, Attraction, Restaurant } from '@/lib/types';
 import { KHIVA_CENTER } from '@/lib/constants';
+import { MapTileLayer } from '@/components/map-tile-layer';
 
 const createIcon = (color: string, emoji: string) =>
   L.divIcon({
@@ -44,10 +45,7 @@ export function AllPlacesMap({ hotels, attractions, restaurants }: Props) {
       scrollWheelZoom={true}
       className="w-full h-full"
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; OpenStreetMap'
-      />
+      <MapTileLayer />
 
       {hotels.map((h) => (
         <Marker key={`h-${h.id}`} position={[h.latitude, h.longitude]} icon={hotelIcon}>

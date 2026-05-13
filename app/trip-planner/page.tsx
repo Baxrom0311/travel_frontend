@@ -19,6 +19,7 @@ const TileLayer = dynamic(() => import('react-leaflet').then((m) => m.TileLayer)
 const Marker = dynamic(() => import('react-leaflet').then((m) => m.Marker), { ssr: false });
 const Polyline = dynamic(() => import('react-leaflet').then((m) => m.Polyline), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then((m) => m.Popup), { ssr: false });
+const MapTileLayer = dynamic(() => import('@/components/map-tile-layer').then((m) => m.MapTileLayer), { ssr: false });
 
 const TYPE_ICONS = {
   attraction: Landmark,
@@ -276,10 +277,7 @@ export default function TripPlannerPage() {
             {dayStops.length > 0 && (
               <div className="h-[500px] lg:h-[600px] lg:sticky lg:top-24 rounded-2xl overflow-hidden border border-border">
                 <MapContainer center={KHIVA_CENTER} zoom={13} className="w-full h-full">
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; OpenStreetMap'
-                  />
+                  <MapTileLayer />
                   {dayStops.map((s, idx) => (
                     <Marker key={s.uid} position={[s.latitude, s.longitude]}>
                       <Popup>

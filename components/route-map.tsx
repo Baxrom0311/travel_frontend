@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Navigation, MapPin, Clock, Route as RouteIcon } from 'lucide-react';
 import { formatDistance, estimateTravelTime, haversineDistance, LatLng } from '@/lib/geo';
 import { getRoute, RouteResult } from '@/lib/routing';
+import { MapTileLayer } from '@/components/map-tile-layer';
 
 interface Props {
   start: LatLng & { label?: string };
@@ -138,10 +139,7 @@ export function RouteMap({ start, end, profile = 'driving', className = '' }: Pr
         className="w-full h-full rounded-2xl"
         scrollWheelZoom={true}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; OpenStreetMap'
-        />
+        <MapTileLayer />
 
         {/* User marker */}
         <Marker position={[start.latitude, start.longitude]} icon={userIcon}>

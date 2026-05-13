@@ -3,6 +3,7 @@ import { Playfair_Display, Outfit } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { I18nProvider } from '@/lib/i18n-context';
 import { AuthProvider } from '@/lib/auth-context';
+import { SettingsProvider } from '@/lib/settings-context';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { ServerStatus } from '@/components/server-status';
@@ -121,7 +122,8 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <I18nProvider>
-            <AuthProvider>
+            <SettingsProvider>
+              <AuthProvider>
               <SplashScreen />
               <ParticlesBackground count={50} />
               <CustomCursor />
@@ -136,6 +138,7 @@ export default function RootLayout({
               <Toaster />
               <ServerStatus />
             </AuthProvider>
+            </SettingsProvider>
           </I18nProvider>
         </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

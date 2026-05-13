@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, Marker, Popup, useMap } from 'react-leaflet';
 import { Icon, LatLngExpression } from 'leaflet';
 import { Attraction } from '@/lib/types';
 import { KHIVA_CENTER } from '@/lib/constants';
 import { useI18n } from '@/lib/i18n-context';
 import { getLocalized } from '@/lib/i18n-helpers';
 import 'leaflet/dist/leaflet.css';
+import { MapTileLayer } from '@/components/map-tile-layer';
 
 const attractionIcon = new Icon({
   iconUrl:
@@ -57,10 +58,7 @@ export function KhivaMap({ attractions, selectedAttraction }: KhivaMapProps) {
       style={{ height: '100%', width: '100%' }}
     >
       <MapViewUpdater center={center} />
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; OpenStreetMap contributors'
-      />
+      <MapTileLayer />
       {attractions
         .filter((a) => a.latitude && a.longitude)
         .map((attraction) => (
