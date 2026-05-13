@@ -19,6 +19,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Lightbox } from '@/components/lightbox';
 import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { BookingModal } from '@/components/booking-modal';
 import dynamic from 'next/dynamic';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), {
@@ -35,6 +36,7 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [routeOpen, setRouteOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const { coords: userCoords, status: geoStatus, request: requestGeo } = useGeolocation();
 
   const t = getSection('accommodation', language);
@@ -162,6 +164,12 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="text-3xl font-bold text-primary">{formatPrice(hotel.price_per_night)}</div>
                 <div className="text-sm text-muted-foreground">/ {tc.per_night}</div>
               </div>
+              <button
+                onClick={() => setBookingOpen(true)}
+                className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold hover:opacity-90 transition-all inline-flex items-center justify-center gap-2 shadow-lg shadow-primary/30 mb-4"
+              >
+                🏨 Band qilish
+              </button>
               <div className="space-y-3 text-sm border-t border-border/50 pt-4">
                 <div className="flex items-center gap-3">
                   <MapPin size={16} className="text-primary shrink-0" />
@@ -233,6 +241,14 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
             ? images.map((img) => ({ src: img.image_url, alt: hotel.name }))
             : [{ src: coverImg, alt: hotel.name }]
         }
+      />
+
+      <BookingModal
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        hotelName={hotel.name}
+        hotelId={hotel.id}
+        pricePerNight={hotel.price_per_night}
       />
 
       {/* Route modal */}

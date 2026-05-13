@@ -16,6 +16,7 @@ import { SoundProvider } from '@/components/sound-provider';
 import { ParticlesBackground } from '@/components/particles-background';
 import { TravelTools } from '@/components/travel-tools';
 import { CompareBar } from '@/components/compare-bar';
+import { MobileBottomNav } from '@/components/mobile-bottom-nav';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -107,7 +108,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uz" className={`${playfair.variable} ${outfit.variable}`} suppressHydrationWarning>
-      <body className="font-sans antialiased bg-background text-foreground">
+      <body className="font-sans antialiased bg-background text-foreground pb-16 xl:pb-0">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -125,6 +126,7 @@ export default function RootLayout({
               <LiveChat />
               <TravelTools />
               <CompareBar />
+              <MobileBottomNav />
               <BackToTop />
               <Toaster />
               <ServerStatus />
