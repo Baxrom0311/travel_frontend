@@ -356,6 +356,20 @@ svg[class*="lucide"] {
   background: color-mix(in srgb, var(--primary) 50%, transparent);
 }
 
+/* Custom cursor - hide default on desktop */
+@media (hover: hover) and (pointer: fine) {
+  .cursor-custom {
+    cursor: none;
+  }
+  .cursor-custom * {
+    cursor: none !important;
+  }
+  .cursor-custom input,
+  .cursor-custom textarea {
+    cursor: text !important;
+  }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {

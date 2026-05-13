@@ -12,6 +12,7 @@ import { Attraction } from '@/lib/types';
 import { MapPin, Star, ArrowRight, Landmark } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
+import { TiltCard } from '@/components/tilt-card';
 
 const PLACE_IMAGES: Record<string, string> = {
   'Kalta Minor': '/images/kalta-minor.jpg',
@@ -96,7 +97,7 @@ export default function KhivaPage() {
           <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((a) => (
               <StaggerItem key={a.id}>
-                <HoverCard lift={-8}>
+                <TiltCard max={8} scale={1.02}>
                   <div className="glass-card rounded-2xl overflow-hidden group relative">
                     <div className="absolute top-3 right-3 z-10">
                       <FavoriteButton
@@ -142,7 +143,7 @@ export default function KhivaPage() {
                       </div>
                     </Link>
                   </div>
-                </HoverCard>
+                </TiltCard>
               </StaggerItem>
             ))}
           </Stagger>

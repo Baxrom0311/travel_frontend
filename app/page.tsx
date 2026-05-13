@@ -11,6 +11,9 @@ import { FadeIn, Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { NumberCounter } from '@/components/number-counter';
 import { PriceRange } from '@/components/price-range';
 import { StatsSection } from '@/components/stats-section';
+import { ScrollReveal } from '@/components/scroll-reveal';
+import { TestimonialsCarousel, Testimonial } from '@/components/testimonials-carousel';
+import { TiltCard } from '@/components/tilt-card';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
@@ -58,6 +61,49 @@ export default function Home() {
     { icon: Mountain, label: 'Turlar', count: stats.total_tours ?? 0, suffix: 'ta tur', href: '/tours', gradient: 'from-emerald-500 to-teal-500' },
     { icon: Bus, label: tcat.transport, count: stats.transport_routes ?? 0, suffix: tcat.transport_count, href: '/transport', gradient: 'from-green-500 to-lime-500' },
     { icon: Calendar, label: tcat.events, count: stats.total_events ?? 0, suffix: tcat.events_count, href: '/events', gradient: 'from-pink-500 to-rose-500' },
+  ];
+
+  const testimonials: Testimonial[] = [
+    {
+      id: 1,
+      name: 'Sarah Johnson',
+      country: 'United States',
+      role: 'Tourist',
+      rating: 5,
+      text: "Khiva was absolutely magical! The ancient Ichan-Kala is like stepping into a fairytale. Our guide was fantastic and the hotels are surprisingly modern while keeping traditional charm.",
+    },
+    {
+      id: 2,
+      name: 'Марина Петрова',
+      country: 'Россия',
+      role: 'Блогер',
+      rating: 5,
+      text: "Хорезм превзошёл все ожидания! Кальта Минор, Джума-мечеть, и местная кухня — это то, что нужно обязательно испытать. Настоящая жемчужина Узбекистана.",
+    },
+    {
+      id: 3,
+      name: 'Hans Mueller',
+      country: 'Germany',
+      role: 'Photographer',
+      rating: 5,
+      text: "As a photographer, Khiva is a paradise. The architecture, the light, the colors — every corner is frame-worthy. UNESCO protected and for good reason!",
+    },
+    {
+      id: 4,
+      name: 'Akmal Yusupov',
+      country: "O'zbekiston",
+      role: 'Turist',
+      rating: 5,
+      text: "Xivada bo'lib turgan har safargi tashrifim — alohida tajriba. Kalta Minor va Juma masjidi hayratlantiradi. Xiva mehmondo'st, arzon va qulay!",
+    },
+    {
+      id: 5,
+      name: 'Yuki Tanaka',
+      country: 'Japan',
+      role: 'Historian',
+      rating: 5,
+      text: "The Silk Road history comes alive in Khiva. The preservation of the old city is remarkable. Friendly locals, great food, and incredible history. Highly recommend!",
+    },
   ];
 
   const fallbackPlaceImg = (name: string): string => {
@@ -478,6 +524,9 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* ============ TESTIMONIALS ============ */}
+      <TestimonialsCarousel testimonials={testimonials} />
 
       <Footer />
     </div>

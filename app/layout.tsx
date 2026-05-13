@@ -9,6 +9,8 @@ import { ServerStatus } from '@/components/server-status';
 import { PageTransition } from '@/components/page-transition';
 import { ScrollProgress } from '@/components/scroll-progress';
 import { BackToTop } from '@/components/back-to-top';
+import { SplashScreen } from '@/components/splash-screen';
+import { CustomCursor } from '@/components/custom-cursor';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -109,6 +111,8 @@ export default function RootLayout({
         >
           <I18nProvider>
             <AuthProvider>
+              <SplashScreen />
+              <CustomCursor />
               <ScrollProgress />
               <PageTransition>{children}</PageTransition>
               <BackToTop />

@@ -14,6 +14,7 @@ import { CityEnum, Hotel, HotelOptions } from '@/lib/types';
 import { Search, MapPin, Star, ArrowRight } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
+import { TiltCard } from '@/components/tilt-card';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -119,7 +120,7 @@ export default function AccommodationPage() {
             <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((h) => (
                 <StaggerItem key={h.id}>
-                  <HoverCard lift={-8}>
+                  <TiltCard max={8} scale={1.02}>
                     <div className="glass-card rounded-2xl overflow-hidden group relative">
                   <div className="absolute top-3 right-3 z-10">
                     <FavoriteButton
@@ -166,7 +167,7 @@ export default function AccommodationPage() {
                     </div>
                   </Link>
                 </div>
-                  </HoverCard>
+                  </TiltCard>
                 </StaggerItem>
               ))}
             </Stagger>
