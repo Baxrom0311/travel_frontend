@@ -9,6 +9,7 @@ import { LANGUAGES } from '@/lib/constants';
 import { getSection } from '@/lib/translations';
 import { useFavorites } from '@/hooks/use-favorites';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { SoundToggle } from '@/components/sound-toggle';
 import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings } from 'lucide-react';
 
 interface NavbarProps {
@@ -159,6 +160,9 @@ export function Navbar({}: NavbarProps = {}) {
 
             {/* Theme toggle */}
             <ThemeToggle variant="glass" />
+
+            {/* Sound toggle */}
+            <SoundToggle />
 
             {/* Mobile burger */}
             <button

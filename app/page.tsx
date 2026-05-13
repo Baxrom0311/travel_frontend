@@ -14,6 +14,7 @@ import { StatsSection } from '@/components/stats-section';
 import { ScrollReveal } from '@/components/scroll-reveal';
 import { TestimonialsCarousel, Testimonial } from '@/components/testimonials-carousel';
 import { TiltCard } from '@/components/tilt-card';
+import { VideoHoverCard } from '@/components/video-hover-card';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
@@ -227,27 +228,25 @@ export default function Home() {
                       href={`/khiva/${p.id}`}
                       className="group relative aspect-[3/4] rounded-2xl overflow-hidden block"
                     >
-                      <Image
-                        src={p.cover_image || fallbackPlaceImg(p.name)}
+                      <VideoHoverCard
+                        image={p.cover_image || fallbackPlaceImg(p.name)}
+                        videoSrc="/videos/khiva-hero.mp4"
                         alt={p.name}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        unoptimized
+                        className="absolute inset-0"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
                       {/* UNESCO badge top-left */}
-                      <div className="absolute top-3 left-3 glass-strong px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                      <div className="absolute top-3 left-3 glass-strong px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1 pointer-events-none">
                         <Landmark size={11} strokeWidth={2.5} />
                         UNESCO
                       </div>
                       {/* Top badge top-right */}
                       {p.is_featured && (
-                        <div className="absolute top-3 right-3 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
+                        <div className="absolute top-3 right-3 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg pointer-events-none">
                           <Star size={14} className="fill-current" strokeWidth={2.5} />
                         </div>
                       )}
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
                         <h3 className="text-white font-serif font-bold text-lg mb-1 drop-shadow-lg">{p.name}</h3>
                         <p className="text-white/80 text-xs flex items-center gap-1">
                           <MapPin size={10} strokeWidth={2.5} /> Xiva, Xorazm

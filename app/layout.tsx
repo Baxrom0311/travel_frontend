@@ -11,6 +11,9 @@ import { ScrollProgress } from '@/components/scroll-progress';
 import { BackToTop } from '@/components/back-to-top';
 import { SplashScreen } from '@/components/splash-screen';
 import { CustomCursor } from '@/components/custom-cursor';
+import { LiveChat } from '@/components/live-chat';
+import { SoundProvider } from '@/components/sound-provider';
+import { ParticlesBackground } from '@/components/particles-background';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -112,9 +115,12 @@ export default function RootLayout({
           <I18nProvider>
             <AuthProvider>
               <SplashScreen />
+              <ParticlesBackground count={50} />
               <CustomCursor />
+              <SoundProvider />
               <ScrollProgress />
               <PageTransition>{children}</PageTransition>
+              <LiveChat />
               <BackToTop />
               <Toaster />
               <ServerStatus />
