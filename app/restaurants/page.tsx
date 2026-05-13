@@ -8,6 +8,7 @@ import { Footer } from '@/components/footer';
 import { FavoriteButton } from '@/components/favorite-button';
 import { PriceRange } from '@/components/price-range';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
+import { NearestPlaces } from '@/components/nearest-places';
 import { useI18n } from '@/lib/i18n-context';
 import { getSection } from '@/lib/translations';
 import { getRestaurants, getRestaurantOptions } from '@/lib/api-client';
@@ -64,6 +65,23 @@ export default function RestaurantsPage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Filters */}
         <div className="glass rounded-2xl p-6 mb-8 -mt-24 relative z-10">
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <p className="text-sm text-muted-foreground">
+              {filtered.length} ta restoran topildi
+            </p>
+            <NearestPlaces
+              label="Eng yaqin restoran"
+              items={restaurants.map((r) => ({
+                id: r.id,
+                name: r.name,
+                latitude: r.latitude,
+                longitude: r.longitude,
+                image: r.cover_image,
+                href: `/restaurants/${r.id}`,
+                subtitle: `${r.city_label} · ${r.price_range} · ⭐ ${r.rating}`,
+              }))}
+            />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <select value={city} onChange={(e) => setCity(e.target.value)} className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm">
               <option value="all">{tc.view_all}</option>

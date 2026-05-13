@@ -13,6 +13,7 @@ import { MapPin, Star, ArrowRight, Landmark } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { TiltCard } from '@/components/tilt-card';
+import { NearestPlaces } from '@/components/nearest-places';
 
 const PLACE_IMAGES: Record<string, string> = {
   'Kalta Minor': '/images/kalta-minor.jpg',
@@ -64,24 +65,38 @@ export default function KhivaPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Filter */}
-        <div className="flex gap-2 mb-8 justify-center">
-          <button
-            onClick={() => setFeaturedOnly(false)}
-            className={`px-6 py-2 rounded-full font-semibold transition-all ${
-              !featuredOnly ? 'bg-primary text-primary-foreground shadow-lg' : 'glass text-foreground'
-            }`}
-          >
-            {tc.view_all || 'Hammasi'}
-          </button>
-          <button
-            onClick={() => setFeaturedOnly(true)}
-            className={`px-6 py-2 rounded-full font-semibold transition-all inline-flex items-center gap-2 ${
-              featuredOnly ? 'bg-amber-500 text-white shadow-lg' : 'glass text-foreground'
-            }`}
-          >
-            <Star size={14} /> Featured
-          </button>
+        {/* Filter + Nearest */}
+        <div className="flex items-center justify-between gap-3 mb-8 flex-wrap">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setFeaturedOnly(false)}
+              className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                !featuredOnly ? 'bg-primary text-primary-foreground shadow-lg' : 'glass text-foreground'
+              }`}
+            >
+              {tc.view_all || 'Hammasi'}
+            </button>
+            <button
+              onClick={() => setFeaturedOnly(true)}
+              className={`px-6 py-2 rounded-full font-semibold transition-all inline-flex items-center gap-2 ${
+                featuredOnly ? 'bg-amber-500 text-white shadow-lg' : 'glass text-foreground'
+              }`}
+            >
+              <Star size={14} /> Featured
+            </button>
+          </div>
+          <NearestPlaces
+            label="Eng yaqin joy"
+            items={attractions.map((a) => ({
+              id: a.id,
+              name: a.name,
+              latitude: a.latitude,
+              longitude: a.longitude,
+              image: a.cover_image,
+              href: `/khiva/${a.id}`,
+              subtitle: a.description.slice(0, 60),
+            }))}
+          />
         </div>
 
         {/* Grid */}

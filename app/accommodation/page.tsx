@@ -15,6 +15,7 @@ import { Search, MapPin, Star, ArrowRight } from 'lucide-react';
 import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { TiltCard } from '@/components/tilt-card';
+import { NearestPlaces, NearestItem } from '@/components/nearest-places';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -71,6 +72,23 @@ export default function AccommodationPage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Filters */}
         <div className="glass rounded-2xl p-6 mb-8 -mt-24 relative z-10">
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <p className="text-sm text-muted-foreground">
+              {filtered.length} ta mehmonxona topildi
+            </p>
+            <NearestPlaces
+              label="Eng yaqin mehmonxona"
+              items={hotels.map((h) => ({
+                id: h.id,
+                name: h.name,
+                latitude: h.latitude,
+                longitude: h.longitude,
+                image: h.cover_image,
+                href: `/accommodation/${h.id}`,
+                subtitle: `${h.city_label} · ${h.stars}★ · ⭐ ${h.rating}`,
+              }))}
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -116,7 +134,6 @@ export default function AccommodationPage() {
           </div>
         ) : (
           <>
-            <p className="text-sm text-muted-foreground mb-4">{filtered.length} mehmonxona</p>
             <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((h) => (
                 <StaggerItem key={h.id}>

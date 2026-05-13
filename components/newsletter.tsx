@@ -27,33 +27,33 @@ export function Newsletter() {
   };
 
   return (
-    <div className="glass-strong rounded-2xl p-6">
+    <div className="glass-strong rounded-2xl p-5 w-full min-w-0 overflow-hidden">
       <div className="flex items-center gap-2 mb-2">
-        <Mail size={18} className="text-primary" />
-        <h3 className="font-semibold">{t.newsletter_title}</h3>
+        <Mail size={18} className="text-primary shrink-0" strokeWidth={2.5} />
+        <h3 className="font-semibold truncate">{t.newsletter_title}</h3>
       </div>
       <p className="text-xs text-muted-foreground mb-4">{t.newsletter_desc}</p>
-      <form onSubmit={submit} className="flex gap-2">
+      <form onSubmit={submit} className="flex flex-col gap-2">
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t.newsletter_placeholder}
-          className="flex-1 h-10 px-3 rounded-lg bg-white border border-border text-sm outline-none focus:border-primary"
+          className="w-full h-10 px-3 rounded-lg bg-white dark:bg-card border border-border text-sm outline-none focus:border-primary min-w-0"
         />
         <button
           type="submit"
           disabled={submitting}
-          className="px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold flex items-center gap-1 disabled:opacity-50"
+          className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 hover:bg-primary/90 transition-colors"
         >
-          <Send size={14} />
-          <span className="hidden sm:inline">{t.newsletter_button}</span>
+          <Send size={14} strokeWidth={2.5} />
+          <span>{t.newsletter_button}</span>
         </button>
       </form>
       {success && (
-        <div className="mt-2 p-2 bg-green-50 text-green-700 rounded-lg text-xs flex items-center gap-1">
-          <CheckCircle2 size={12} /> {t.newsletter_success}
+        <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-xs flex items-center gap-1">
+          <CheckCircle2 size={12} strokeWidth={2.5} /> {t.newsletter_success}
         </div>
       )}
     </div>
