@@ -54,7 +54,7 @@ const API_BASE_URL = (
 ).replace(/\/+$/, '');
 
 const CACHE_KEY = 'visitkhorezm_settings';
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 30 * 1000; // 30 seconds - tez yangilanish
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
