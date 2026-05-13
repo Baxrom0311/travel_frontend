@@ -10,7 +10,7 @@ import { getSection } from '@/lib/translations';
 import { useFavorites } from '@/hooks/use-favorites';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SoundToggle } from '@/components/sound-toggle';
-import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings } from 'lucide-react';
+import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings, ChevronDown, Images, Users, Calendar as CalIcon, Lightbulb, HelpCircle } from 'lucide-react';
 
 interface NavbarProps {
   /** @deprecated - navbar always uses glass now */
@@ -22,10 +22,12 @@ export function Navbar({}: NavbarProps = {}) {
   const { user, isAuthenticated, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname();
   const nav = getSection('nav', language);
   const { count: favCount, mounted: favMounted } = useFavorites();
 
+  // Primary items (visible as tabs)
   const items = [
     { href: '/', label: nav.home },
     { href: '/khiva', label: nav.places },
@@ -33,9 +35,20 @@ export function Navbar({}: NavbarProps = {}) {
     { href: '/restaurants', label: nav.restaurants },
     { href: '/tours', label: nav.tours },
     { href: '/events', label: nav.events },
-    { href: '/news', label: nav.news },
     { href: '/map', label: nav.map },
   ];
+
+  // Secondary items (in "More" dropdown)
+  const moreItems = [
+    { href: '/gallery', label: nav.gallery, icon: Images },
+    { href: '/trip-planner', label: nav.trip_planner, icon: CalIcon },
+    { href: '/news', label: nav.news, icon: MapPin },
+    { href: '/partners', label: nav.partners, icon: Users },
+    { href: '/tips', label: nav.tips, icon: Lightbulb },
+    { href: '/faq', label: nav.faq, icon: HelpCircle },
+  ];
+
+  const isMoreActive = moreItems.some((i) => pathname === i.href || pathname.startsWith(i.href + '/'));
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 nav-glass">
@@ -74,6 +87,55 @@ export function Navbar({}: NavbarProps = {}) {
                 </Link>
               );
             })}
+
+            {/* More dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                className={`px-3 py-2 rounded-full text-sm font-medium transition-all inline-flex items-center gap-1 ${
+                  isMoreActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-foreground/80 hover:bg-foreground/5 hover:text-foreground'
+                }`}
+              >
+                Ko'proq
+                <ChevronDown size={14} strokeWidth={2.5} className={`transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {moreOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setMoreOpen(false)} />
+                  <div className="absolute right-0 mt-2 min-w-[220px] glass-strong rounded-xl shadow-xl z-40 overflow-hidden p-1">
+                    {moreItems.map((m) => {
+                      const active = pathname === m.href || pathname.startsWith(m.href + '/');
+                      const Icon = m.icon;
+                      return (
+                        <Link
+                          key={m.href}
+                          href={m.href}
+                          onClick={() => setMoreOpen(false)}
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            active ? 'bg-primary text-primary-foreground' : 'hover:bg-foreground/5'
+                          }`}
+                        >
+                          <Icon size={14} strokeWidth={2.5} className="shrink-0" />
+                          {m.label}
+                        </Link>
+                      );
+                    })}
+                    <Link
+                      href="/contact"
+                      onClick={() => setMoreOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors border-t border-border mt-1 pt-2 ${
+                        pathname === '/contact' ? 'bg-primary text-primary-foreground' : 'hover:bg-foreground/5'
+                      }`}
+                    >
+                      <MapPin size={14} strokeWidth={2.5} className="shrink-0" />
+                      {nav.contact}
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Right side */}
@@ -196,34 +258,38 @@ export function Navbar({}: NavbarProps = {}) {
                 </Link>
               );
             })}
-            <Link
-              href="/trip-planner"
-              onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/trip-planner' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
-            >
-              {nav.trip_planner}
-            </Link>
-            <Link
-              href="/tips"
-              onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/tips' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
-            >
-              {nav.tips}
-            </Link>
-            <Link
-              href="/faq"
-              onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/faq' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
-            >
-              {nav.faq}
-            </Link>
-            <Link
-              href="/contact"
-              onClick={() => setIsOpen(false)}
-              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/contact' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
-            >
-              {nav.contact}
-            </Link>
+            <div className="border-t border-border my-2 pt-2">
+              <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                Ko'proq
+              </div>
+              {moreItems.map((m) => {
+                const active = pathname === m.href || pathname.startsWith(m.href + '/');
+                const Icon = m.icon;
+                return (
+                  <Link
+                    key={m.href}
+                    href={m.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      active ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'
+                    }`}
+                  >
+                    <Icon size={14} strokeWidth={2.5} />
+                    {m.label}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/contact"
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  pathname === '/contact' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'
+                }`}
+              >
+                <MapPin size={14} strokeWidth={2.5} />
+                {nav.contact}
+              </Link>
+            </div>
             <div className="flex gap-2 pt-2 border-t border-border mt-2">
               {LANGUAGES.map((lang) => (
                 <button
