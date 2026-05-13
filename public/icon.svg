@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d746d" />
+      <stop offset="100%" stop-color="#d5a642" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <g fill="white" transform="translate(96, 120)">
+    <!-- Stylized dome/minaret icon -->
+    <path d="M160 0 L160 60 L140 60 L140 80 L180 80 L180 60 L160 60 Z"/>
+    <path d="M110 90 Q110 60 160 60 Q210 60 210 90 L210 260 L110 260 Z" opacity="0.95"/>
+    <rect x="140" y="140" width="40" height="60" rx="20" fill="#0d746d"/>
+    <rect x="130" y="220" width="60" height="15" fill="#0d746d"/>
+    <!-- Base building -->
+    <rect x="40" y="260" width="240" height="130" rx="8"/>
+    <rect x="75" y="300" width="30" height="60" fill="#0d746d" opacity="0.6"/>
+    <rect x="135" y="300" width="30" height="60" fill="#0d746d" opacity="0.6"/>
+    <rect x="195" y="300" width="30" height="60" fill="#0d746d" opacity="0.6"/>
+  </g>
+</svg>

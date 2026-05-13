@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth-context';
 import { LANGUAGES } from '@/lib/constants';
 import { getSection } from '@/lib/translations';
 import { useFavorites } from '@/hooks/use-favorites';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Menu, X, MapPin, Heart, User, LogIn, LogOut, Settings } from 'lucide-react';
 
 interface NavbarProps {
@@ -166,6 +167,9 @@ export function Navbar({ variant = 'default' }: NavbarProps) {
                 </button>
               ))}
             </div>
+
+            {/* Theme toggle */}
+            <ThemeToggle variant={isTransparent ? 'glass' : 'default'} />
 
             {/* Mobile burger */}
             <button
