@@ -18,6 +18,12 @@ import { TiltCard } from '@/components/tilt-card';
 import { NearestPlaces, NearestItem } from '@/components/nearest-places';
 import { CompareButton } from '@/components/compare-button';
 import { AddToTripButton } from '@/components/add-to-trip-button';
+import dynamic from 'next/dynamic';
+
+const SplitMapView = dynamic(() => import('@/components/split-map-view').then((m) => m.SplitMapView), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-muted animate-pulse rounded-2xl" />,
+});
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -71,7 +77,7 @@ export default function AccommodationPage() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-[1600px] mx-auto px-4 py-8">
         {/* Filters */}
         <div className="glass rounded-2xl p-6 mb-8 -mt-24 relative z-10">
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
@@ -125,21 +131,21 @@ export default function AccommodationPage() {
           </div>
         </div>
 
-        {/* Results */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 glass rounded-2xl">
-            <p className="text-muted-foreground">{t.no_hotels}</p>
-          </div>
-        ) : (
-          <>
-            <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((h) => (
-                <StaggerItem key={h.id}>
-                  <TiltCard max={8} scale={1.02}>
+        {/* Results with split map */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6">
+          <div className="order-1">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1,2,3,4].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-20 glass rounded-2xl">
+                <p className="text-muted-foreground">{t.no_hotels}</p>
+              </div>
+            ) : (
+              <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filtered.map((h) => (
+                  <StaggerItem key={h.id}>
                     <div className="glass-card rounded-2xl overflow-hidden group relative">
                   <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
                     <AddToTripButton
@@ -160,12 +166,12 @@ export default function AccommodationPage() {
                     />
                   </div>
                   <Link href={`/accommodation/${h.id}`} className="block">
-                    <div className="relative h-52 overflow-hidden">
+                    <div className="relative h-44 overflow-hidden">
                       <Image
                         src={h.cover_image || FALLBACK_IMAGES.hotel}
                         alt={h.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 1024px) 100vw, 400px"
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                         unoptimized
                       />
@@ -177,15 +183,14 @@ export default function AccommodationPage() {
                         {h.rating}
                       </div>
                     </div>
-                    <div className="p-5">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-1">{h.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-3 flex items-center gap-1">
+                    <div className="p-4">
+                      <h3 className="font-semibold text-base mb-2 line-clamp-1">{h.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
                         <MapPin size={12} /> {h.city_label}
                       </p>
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{h.description}</p>
-                      <div className="flex items-end justify-between border-t border-border/50 pt-4">
+                      <div className="flex items-end justify-between border-t border-border/50 pt-3">
                         <div>
-                          <div className="text-xl font-bold text-primary">{formatPrice(h.price_per_night)}</div>
+                          <div className="text-lg font-bold text-primary">{formatPrice(h.price_per_night)}</div>
                           <div className="text-[10px] text-muted-foreground">/ {tc.per_night}</div>
                         </div>
                         <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
@@ -195,12 +200,32 @@ export default function AccommodationPage() {
                     </div>
                   </Link>
                 </div>
-                  </TiltCard>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </>
-        )}
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            )}
+          </div>
+
+          {/* MAP */}
+          <div className="order-2 lg:sticky lg:top-20 lg:self-start h-[500px] lg:h-[calc(100vh-120px)]">
+            {!loading && filtered.length > 0 && (
+              <SplitMapView
+                items={filtered.map((h) => ({
+                  id: h.id,
+                  name: h.name,
+                  latitude: h.latitude,
+                  longitude: h.longitude,
+                  href: `/accommodation/${h.id}`,
+                  image: h.cover_image,
+                  icon: '🏨',
+                  subtitle: `${h.stars}★ · ⭐ ${h.rating} · ${formatPrice(h.price_per_night)}`,
+                  color: h.is_featured ? '#d5a642' : '#3b82f6',
+                }))}
+                markerColor="#3b82f6"
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <Footer />

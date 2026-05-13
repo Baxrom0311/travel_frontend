@@ -10,6 +10,12 @@ import { PriceRange } from '@/components/price-range';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { NearestPlaces } from '@/components/nearest-places';
 import { AddToTripButton } from '@/components/add-to-trip-button';
+import dynamic from 'next/dynamic';
+
+const SplitMapView = dynamic(() => import('@/components/split-map-view').then((m) => m.SplitMapView), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-muted animate-pulse rounded-2xl" />,
+});
 import { useI18n } from '@/lib/i18n-context';
 import { getSection } from '@/lib/translations';
 import { getRestaurants, getRestaurantOptions } from '@/lib/api-client';
@@ -63,7 +69,7 @@ export default function RestaurantsPage() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-[1600px] mx-auto px-4 py-8">
         {/* Filters */}
         <div className="glass rounded-2xl p-6 mb-8 -mt-24 relative z-10">
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
@@ -103,21 +109,21 @@ export default function RestaurantsPage() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 glass rounded-2xl">
-            <Utensils className="mx-auto mb-4 text-muted-foreground" size={48} />
-            <p className="text-muted-foreground">{t.no_restaurants}</p>
-          </div>
-        ) : (
-          <>
-            <p className="text-sm text-muted-foreground mb-4">{filtered.length} restoran</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((r) => (
-                <div key={r.id} className="glass-card rounded-2xl overflow-hidden group relative">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6">
+          <div className="order-1">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[1,2,3,4].map(i => <div key={i} className="h-96 glass-card rounded-2xl animate-pulse" />)}
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-20 glass rounded-2xl">
+                <Utensils className="mx-auto mb-4 text-muted-foreground" size={48} />
+                <p className="text-muted-foreground">{t.no_restaurants}</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {filtered.map((r) => (
+                  <div key={r.id} className="glass-card rounded-2xl overflow-hidden group relative">
                   <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
                     <AddToTripButton
                       type="restaurant"
@@ -136,12 +142,12 @@ export default function RestaurantsPage() {
                     />
                   </div>
                   <Link href={`/restaurants/${r.id}`} className="block">
-                    <div className="relative h-52 overflow-hidden">
+                    <div className="relative h-44 overflow-hidden">
                       <Image
                         src={r.cover_image || '/images/bazaar.jpg'}
                         alt={r.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 1024px) 100vw, 400px"
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                         unoptimized
                       />
@@ -152,19 +158,18 @@ export default function RestaurantsPage() {
                         <Star size={10} className="fill-amber-500 text-amber-500" /> {r.rating}
                       </div>
                     </div>
-                    <div className="p-5">
-                      <h3 className="font-semibold text-lg mb-2 line-clamp-1">{r.name}</h3>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-base mb-2 line-clamp-1">{r.name}</h3>
                       <p className="text-sm text-muted-foreground mb-2 flex items-center gap-1">
                         <MapPin size={12} /> {r.city_label}
                       </p>
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {r.cuisines.slice(0, 3).map(c => (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {r.cuisines.slice(0, 2).map(c => (
                           <span key={c.id} className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                             {c.icon} {c.name}
                           </span>
                         ))}
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{r.description}</p>
                       <div className="flex items-center gap-3 text-muted-foreground">
                         {r.has_wifi && <Wifi size={14} />}
                         {r.has_parking && <Car size={14} />}
@@ -174,10 +179,31 @@ export default function RestaurantsPage() {
                     </div>
                   </Link>
                 </div>
-              ))}
-            </div>
-          </>
-        )}
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* MAP */}
+          <div className="order-2 lg:sticky lg:top-20 lg:self-start h-[500px] lg:h-[calc(100vh-120px)]">
+            {!loading && filtered.length > 0 && (
+              <SplitMapView
+                items={filtered.map((r) => ({
+                  id: r.id,
+                  name: r.name,
+                  latitude: r.latitude,
+                  longitude: r.longitude,
+                  href: `/restaurants/${r.id}`,
+                  image: r.cover_image,
+                  icon: '🍽',
+                  subtitle: `${r.price_range} · ⭐ ${r.rating} · ${r.city_label}`,
+                  color: '#f97316',
+                }))}
+                markerColor="#f97316"
+              />
+            )}
+          </div>
+        </div>
       </div>
 
       <Footer />
