@@ -18,6 +18,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Lightbox } from '@/components/lightbox';
 import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { JsonLd, touristAttractionSchema, breadcrumbSchema } from '@/components/structured-data';
 import dynamic from 'next/dynamic';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), { ssr: false });
@@ -75,6 +76,11 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="min-h-screen">
+      <JsonLd data={touristAttractionSchema(attraction)} />
+      <JsonLd data={breadcrumbSchema([
+        { label: t.title, url: '/khiva' },
+        { label: attraction.name },
+      ])} />
       <Navbar />
 
       <div className="pt-20">

@@ -8,10 +8,11 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useTripPlanner, TripStop } from '@/hooks/use-trip-planner';
 import {
-  Calendar, MapPin, Trash2, Plus, Route, Printer, Download,
+  Calendar, MapPin, Trash2, Plus, Route, Printer, Share2, Check,
   BedDouble, Landmark, Utensils, Mountain, CalendarDays,
 } from 'lucide-react';
 import { haversineDistance, formatDistance, estimateTravelTime } from '@/lib/geo';
+import { toast } from 'sonner';
 
 const MapContainer = dynamic(() => import('react-leaflet').then((m) => m.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then((m) => m.TileLayer), { ssr: false });
@@ -70,6 +71,33 @@ export default function TripPlannerPage() {
 
   const handlePrint = () => window.print();
 
+  const handleShare = async () => {
+    const text = dayNumbers
+      .map((d) => {
+        const dayStops = byDay(d);
+        const lines = dayStops.map((s, i) => `  ${i + 1}. ${s.name}`);
+        return `Kun ${d}:\n${lines.join('\n')}`;
+      })
+      .join('\n\n');
+
+    const fullText = `🏛️ Xorazm sayohat rejam\n\n${text}\n\n📍 https://visitkhorezm.uz/trip-planner`;
+
+    try {
+      const nav = navigator as any;
+      if (typeof nav !== 'undefined' && 'share' in nav) {
+        await nav.share({
+          title: 'Xorazm sayohat rejam',
+          text: fullText,
+        });
+      } else {
+        await navigator.clipboard.writeText(fullText);
+        toast.success('Reja buferga nusxalandi!');
+      }
+    } catch {
+      // user cancelled
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -123,6 +151,9 @@ export default function TripPlannerPage() {
               <div className="text-xs text-muted-foreground">Jami masofa</div>
             </div>
             <div className="text-center flex items-center justify-center gap-2">
+              <button onClick={handleShare} className="glass-button p-2 rounded-full" title="Share">
+                <Share2 size={16} strokeWidth={2.5} />
+              </button>
               <button onClick={handlePrint} className="glass-button p-2 rounded-full" title="Print">
                 <Printer size={16} strokeWidth={2.5} />
               </button>

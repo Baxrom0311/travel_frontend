@@ -370,6 +370,53 @@ svg[class*="lucide"] {
   }
 }
 
+/* ============ PRINT STYLES ============ */
+@media print {
+  /* Hide UI chrome */
+  nav, footer, .nav-glass, .mobile-bottom-nav,
+  .glass-button, button[aria-label],
+  video, canvas, iframe,
+  [class*="ServerStatus"], [class*="LiveChat"],
+  [class*="BackToTop"], [class*="TravelTools"],
+  [class*="CompareBar"], [class*="CustomCursor"],
+  [class*="ParticlesBackground"], [class*="SplashScreen"] {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+  }
+
+  .glass, .glass-strong, .glass-card, .section-bg {
+    background: white !important;
+    backdrop-filter: none !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {

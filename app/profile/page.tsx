@@ -9,7 +9,7 @@ import { Footer } from '@/components/footer';
 import { useAuth } from '@/lib/auth-context';
 import { updateProfile, changePassword } from '@/lib/auth-client';
 import { ProtectedRoute } from '@/components/protected-route';
-import { User as UserIcon, Mail, Phone, Globe, LogOut, Save, Lock, Heart, CheckCircle2, AlertCircle } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Globe, LogOut, Save, Lock, Heart, CheckCircle2, AlertCircle, Camera } from 'lucide-react';
 
 export default function ProfilePage() {
   return (
@@ -101,12 +101,54 @@ function ProfileContent() {
           {/* Sidebar */}
           <div className="glass rounded-2xl p-6 h-fit sticky top-24">
             <div className="text-center mb-6">
-              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3 overflow-hidden">
-                {user.avatar_url ? (
-                  <Image src={user.avatar_url} alt={user.full_name} width={96} height={96} className="object-cover" unoptimized />
-                ) : (
-                  <UserIcon size={40} className="text-primary" />
-                )}
+              <div className="relative w-24 h-24 mx-auto mb-3 group">
+                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                  {user.avatar_url ? (
+                    <Image src={user.avatar_url} alt={user.full_name} width={96} height={96} className="object-cover" unoptimized />
+                  ) : (
+                    <UserIcon size={40} className="text-primary" />
+                  )}
+                </div>
+                <label
+                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center cursor-pointer hover:scale-110 transition-transform shadow-lg"
+                  title="Upload avatar"
+                >
+                  <Camera size={14} strokeWidth={2.5} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 5 * 1024 * 1024) {
+                        setMsg({ type: 'error', text: 'Rasm hajmi 5MB dan oshmasligi kerak' });
+                        return;
+                      }
+                      const formData = new FormData();
+                      formData.append('avatar', file);
+                      const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+                      const tokens = JSON.parse(localStorage.getItem('visitkhorezm_auth') || '{}');
+                      try {
+                        const res = await fetch(`${API}/auth/me/`, {
+                          method: 'PATCH',
+                          headers: { Authorization: `Bearer ${tokens.access}` },
+                          body: formData,
+                        });
+                        if (res.ok) {
+                          const data = await res.json();
+                          updateUser(data);
+                          setMsg({ type: 'success', text: 'Avatar yangilandi!' });
+                        } else {
+                          setMsg({ type: 'error', text: 'Avatar yuklashda xatolik' });
+                        }
+                      } catch {
+                        setMsg({ type: 'error', text: 'Tarmoq xatoligi' });
+                      }
+                      setTimeout(() => setMsg(null), 3000);
+                    }}
+                  />
+                </label>
               </div>
               <h2 className="font-serif text-xl font-bold">{user.full_name}</h2>
               <p className="text-sm text-muted-foreground">{user.email}</p>

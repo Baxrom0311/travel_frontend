@@ -20,6 +20,7 @@ import { Lightbox } from '@/components/lightbox';
 import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { BookingModal } from '@/components/booking-modal';
+import { JsonLd, hotelSchema, breadcrumbSchema } from '@/components/structured-data';
 import dynamic from 'next/dynamic';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), {
@@ -78,6 +79,11 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="min-h-screen">
+      <JsonLd data={hotelSchema(hotel)} />
+      <JsonLd data={breadcrumbSchema([
+        { label: t.title, url: '/accommodation' },
+        { label: hotel.name },
+      ])} />
       <Navbar />
 
       <div className="pt-20">

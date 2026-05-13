@@ -17,6 +17,7 @@ import { ParticlesBackground } from '@/components/particles-background';
 import { TravelTools } from '@/components/travel-tools';
 import { CompareBar } from '@/components/compare-bar';
 import { MobileBottomNav } from '@/components/mobile-bottom-nav';
+import { JsonLd, organizationSchema, websiteSchema } from '@/components/structured-data';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -108,6 +109,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="uz" className={`${playfair.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <JsonLd data={organizationSchema()} />
+        <JsonLd data={websiteSchema()} />
+      </head>
       <body className="font-sans antialiased bg-background text-foreground pb-16 xl:pb-0">
         <ThemeProvider
           attribute="class"
