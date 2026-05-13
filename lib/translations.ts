@@ -31,6 +31,7 @@ export const translations = {
     news: { uz: 'Yangiliklar', en: 'News', ru: 'Новости' },
     map: { uz: 'Xarita', en: 'Map', ru: 'Карта' },
     gallery: { uz: 'Galereya', en: 'Gallery', ru: 'Галерея' },
+    partners: { uz: 'Hamkorlar', en: 'Partners', ru: 'Партнёры' },
     trip_planner: { uz: 'Sayohat rejasi', en: 'Trip Planner', ru: 'План поездки' },
     tips: { uz: 'Qo\'llanma', en: 'Travel Tips', ru: 'Советы' },
     faq: { uz: 'FAQ', en: 'FAQ', ru: 'FAQ' },

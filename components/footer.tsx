@@ -20,6 +20,7 @@ export function Footer() {
     { href: '/events', label: nav.events },
     { href: '/map', label: nav.map },
     { href: '/gallery', label: nav.gallery },
+    { href: '/partners', label: nav.partners },
     { href: '/trip-planner', label: nav.trip_planner },
     { href: '/tips', label: nav.tips },
     { href: '/faq', label: nav.faq },

@@ -21,6 +21,7 @@ import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
 import { BookingModal } from '@/components/booking-modal';
 import { JsonLd, hotelSchema, breadcrumbSchema } from '@/components/structured-data';
+import { ExternalBookingLinks } from '@/components/external-booking-links';
 import dynamic from 'next/dynamic';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), {
@@ -204,6 +205,15 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
                   <MapPin size={14} strokeWidth={2.5} /> Google Maps
                 </a>
               )}
+            </div>
+
+            {/* External booking platforms */}
+            <div className="mt-6">
+              <ExternalBookingLinks
+                name={`${hotel.name} ${hotel.city_label}`}
+                latitude={hotel.latitude}
+                longitude={hotel.longitude}
+              />
             </div>
           </div>
         </div>
