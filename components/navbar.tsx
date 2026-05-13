@@ -42,14 +42,14 @@ export function Navbar({}: NavbarProps = {}) {
         <div className="flex h-16 items-center justify-between gap-2">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <MapPin className="text-white" size={20} />
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105 shadow-lg shadow-primary/30">
+              <MapPin className="text-white drop-shadow" size={20} strokeWidth={2.5} />
             </div>
             <div className="hidden sm:block">
               <div className="font-serif text-lg font-bold leading-tight text-foreground">
                 Visit Khorezm
               </div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
                 Travel & Tourism
               </div>
             </div>
@@ -85,7 +85,7 @@ export function Navbar({}: NavbarProps = {}) {
                   className="flex items-center gap-2 rounded-full p-1 pr-3 glass-button hover:bg-foreground/5 transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-                    <User size={14} className="text-white" />
+                    <User size={14} className="text-white" strokeWidth={2.5} />
                   </div>
                   <span className="hidden md:inline text-sm font-medium text-foreground">
                     {user.full_name.split(' ')[0]}
@@ -120,7 +120,7 @@ export function Navbar({}: NavbarProps = {}) {
                 href="/login"
                 className="flex items-center gap-1.5 px-3 h-9 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                <LogIn size={14} /> <span className="hidden sm:inline">Kirish</span>
+                <LogIn size={14} strokeWidth={2.5} /> <span className="hidden sm:inline">Kirish</span>
               </Link>
             )}
 
@@ -131,7 +131,7 @@ export function Navbar({}: NavbarProps = {}) {
                 className="relative glass-button rounded-full p-2 transition-colors"
                 aria-label="Favorites"
               >
-                <Heart size={18} className="text-foreground" />
+                <Heart size={18} className="text-foreground" strokeWidth={2.25} />
                 {favCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
                     {favCount > 9 ? '9+' : favCount}
