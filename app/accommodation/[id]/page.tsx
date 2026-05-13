@@ -13,6 +13,9 @@ import { formatPrice } from '@/lib/i18n-helpers';
 import { Hotel } from '@/lib/types';
 import { MapPin, Star, ArrowLeft, ArrowRight } from 'lucide-react';
 import { FALLBACK_IMAGES } from '@/lib/constants';
+import { FavoriteButton } from '@/components/favorite-button';
+import { ReviewsSection } from '@/components/reviews-section';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 export default function HotelDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -66,9 +69,10 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
 
       <div className="pt-20">
         <div className="max-w-7xl mx-auto px-4 mb-6">
-          <Link href="/accommodation" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
-            <ArrowLeft size={16} /> {tc.back}
-          </Link>
+          <Breadcrumbs items={[
+            { label: t.title, href: '/accommodation' },
+            { label: hotel.name },
+          ]} />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -80,8 +84,18 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
               <div className="absolute top-4 left-4 glass-strong px-4 py-2 rounded-full text-sm font-semibold">
                 ★ {hotel.stars} Star
               </div>
-              <div className="absolute top-4 right-4 glass-strong px-3 py-1.5 rounded-full flex items-center gap-1 text-sm font-semibold">
-                <Star size={12} className="fill-amber-500 text-amber-500" /> {hotel.rating}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <div className="glass-strong px-3 py-1.5 rounded-full flex items-center gap-1 text-sm font-semibold">
+                  <Star size={12} className="fill-amber-500 text-amber-500" /> {hotel.rating}
+                </div>
+                <FavoriteButton
+                  type="hotel"
+                  id={hotel.id}
+                  name={hotel.name}
+                  image={hotel.cover_image || undefined}
+                  href={`/accommodation/${hotel.id}`}
+                  variant="glass"
+                />
               </div>
             </div>
 
@@ -125,6 +139,8 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             )}
+
+            <ReviewsSection targetType="hotel" targetId={hotel.id} />
           </div>
 
           {/* Sidebar */}

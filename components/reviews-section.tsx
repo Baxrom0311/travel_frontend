@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, MessageSquare, User, Send, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { Star, MessageSquare, User, Send, CheckCircle2, LogIn } from 'lucide-react';
 import { useI18n } from '@/lib/i18n-context';
+import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
 import { getReviews, submitReview } from '@/lib/api-client';
 import { Review, ReviewStats, ReviewTargetType } from '@/lib/types';
@@ -14,8 +16,8 @@ interface Props {
 
 export function ReviewsSection({ targetType, targetId }: Props) {
   const { language } = useI18n();
+  const { user, isAuthenticated } = useAuth();
   const t = getSection('reviews', language);
-  const tc = getSection('common', language);
 
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<ReviewStats>({ avg_rating: 0, total: 0 });
@@ -30,6 +32,18 @@ export function ReviewsSection({ targetType, targetId }: Props) {
     title: '',
     comment: '',
   });
+
+  // Auto-fill from user
+  useEffect(() => {
+    if (user) {
+      setForm(prev => ({
+        ...prev,
+        name: user.full_name || '',
+        email: user.email || '',
+        country: user.country || '',
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     load();
@@ -53,7 +67,11 @@ export function ReviewsSection({ targetType, targetId }: Props) {
     });
     if (res.success) {
       setSuccess(true);
-      setForm({ name: '', email: '', country: '', rating: 5, title: '', comment: '' });
+      if (!user) {
+        setForm({ name: '', email: '', country: '', rating: 5, title: '', comment: '' });
+      } else {
+        setForm(prev => ({ ...prev, rating: 5, title: '', comment: '' }));
+      }
       setTimeout(() => { setSuccess(false); setShowForm(false); }, 3000);
     }
     setSubmitting(false);
@@ -61,7 +79,7 @@ export function ReviewsSection({ targetType, targetId }: Props) {
 
   return (
     <div className="glass rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <h2 className="font-serif text-2xl font-bold flex items-center gap-2">
             <MessageSquare size={20} className="text-primary" />
@@ -88,73 +106,95 @@ export function ReviewsSection({ targetType, targetId }: Props) {
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="mb-6 p-4 bg-secondary/50 rounded-xl space-y-3">
-          {success && (
-            <div className="p-3 bg-green-50 text-green-700 rounded-lg text-sm flex items-center gap-2">
-              <CheckCircle2 size={16} /> {t.success}
+        <>
+          {!isAuthenticated && (
+            <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-xl text-sm flex items-center justify-between gap-2">
+              <span>💡 Account yarating va tezda sharh qoldiring</span>
+              <Link href="/login" className="font-semibold hover:underline inline-flex items-center gap-1">
+                <LogIn size={14} /> Kirish
+              </Link>
             </div>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input
-              type="text"
-              placeholder="Ismingiz"
+
+          <form onSubmit={submit} className="mb-6 p-4 bg-secondary/50 rounded-xl space-y-3">
+            {success && (
+              <div className="p-3 bg-green-50 text-green-700 rounded-lg text-sm flex items-center gap-2">
+                <CheckCircle2 size={16} /> {t.success}
+              </div>
+            )}
+
+            {!isAuthenticated && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <input
+                  type="text"
+                  placeholder="Ismingiz"
+                  required
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {!isAuthenticated && (
+                <input
+                  type="text"
+                  placeholder={t.country}
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
+                />
+              )}
+              <input
+                type="text"
+                placeholder={t.review_title}
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                className={`h-10 px-3 rounded-lg bg-white border border-border text-sm ${isAuthenticated ? 'md:col-span-2' : ''}`}
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">{t.your_rating}:</span>
+              {[1,2,3,4,5].map(i => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setForm({ ...form, rating: i })}
+                >
+                  <Star size={24} className={i <= form.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300'} />
+                </button>
+              ))}
+            </div>
+
+            <textarea
+              placeholder={t.review_comment}
               required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
+              rows={3}
+              minLength={10}
+              value={form.comment}
+              onChange={(e) => setForm({ ...form, comment: e.target.value })}
+              className="w-full px-3 py-2 rounded-lg bg-white border border-border text-sm resize-none"
             />
-            <input
-              type="email"
-              placeholder="Email"
-              required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
-            />
-            <input
-              type="text"
-              placeholder={t.country}
-              value={form.country}
-              onChange={(e) => setForm({ ...form, country: e.target.value })}
-              className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
-            />
-            <input
-              type="text"
-              placeholder={t.review_title}
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="h-10 px-3 rounded-lg bg-white border border-border text-sm"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">{t.your_rating}:</span>
-            {[1,2,3,4,5].map(i => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setForm({ ...form, rating: i })}
-              >
-                <Star size={24} className={i <= form.rating ? 'fill-amber-500 text-amber-500' : 'text-gray-300'} />
-              </button>
-            ))}
-          </div>
-          <textarea
-            placeholder={t.review_comment}
-            required
-            rows={3}
-            minLength={10}
-            value={form.comment}
-            onChange={(e) => setForm({ ...form, comment: e.target.value })}
-            className="w-full px-3 py-2 rounded-lg bg-white border border-border text-sm resize-none"
-          />
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            <Send size={14} /> {submitting ? '...' : t.submit_review}
-          </button>
-        </form>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              <Send size={14} /> {submitting ? '...' : t.submit_review}
+            </button>
+          </form>
+        </>
       )}
 
       {reviews.length === 0 ? (

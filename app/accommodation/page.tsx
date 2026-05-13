@@ -12,6 +12,7 @@ import { FALLBACK_IMAGES } from '@/lib/constants';
 import { formatPrice } from '@/lib/i18n-helpers';
 import { CityEnum, Hotel, HotelOptions } from '@/lib/types';
 import { Search, MapPin, Star, ArrowRight } from 'lucide-react';
+import { FavoriteButton } from '@/components/favorite-button';
 
 export default function AccommodationPage() {
   const { language } = useI18n();
@@ -116,45 +117,52 @@ export default function AccommodationPage() {
             <p className="text-sm text-muted-foreground mb-4">{filtered.length} mehmonxona</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((h) => (
-                <Link
-                  key={h.id}
-                  href={`/accommodation/${h.id}`}
-                  className="glass-card rounded-2xl overflow-hidden group"
-                >
-                  <div className="relative h-52 overflow-hidden">
-                    <Image
-                      src={h.cover_image || FALLBACK_IMAGES.hotel}
-                      alt={h.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      unoptimized
+                <div key={h.id} className="glass-card rounded-2xl overflow-hidden group relative">
+                  <div className="absolute top-3 right-3 z-10">
+                    <FavoriteButton
+                      type="hotel"
+                      id={h.id}
+                      name={h.name}
+                      image={h.cover_image || undefined}
+                      href={`/accommodation/${h.id}`}
                     />
-                    <div className="absolute top-3 left-3 glass-strong px-3 py-1 rounded-full text-xs font-semibold">
-                      ★ {h.stars}
-                    </div>
-                    <div className="absolute top-3 right-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <Star size={10} className="fill-amber-500 text-amber-500" />
-                      {h.rating}
-                    </div>
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">{h.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3 flex items-center gap-1">
-                      <MapPin size={12} /> {h.city_label}
-                    </p>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{h.description}</p>
-                    <div className="flex items-end justify-between border-t border-border/50 pt-4">
-                      <div>
-                        <div className="text-xl font-bold text-primary">{formatPrice(h.price_per_night)}</div>
-                        <div className="text-[10px] text-muted-foreground">/ {tc.per_night}</div>
+                  <Link href={`/accommodation/${h.id}`} className="block">
+                    <div className="relative h-52 overflow-hidden">
+                      <Image
+                        src={h.cover_image || FALLBACK_IMAGES.hotel}
+                        alt={h.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        unoptimized
+                      />
+                      <div className="absolute top-3 left-3 glass-strong px-3 py-1 rounded-full text-xs font-semibold">
+                        ★ {h.stars}
                       </div>
-                      <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                        {tc.details} <ArrowRight size={14} />
-                      </span>
+                      <div className="absolute bottom-3 left-3 glass-strong px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                        <Star size={10} className="fill-amber-500 text-amber-500" />
+                        {h.rating}
+                      </div>
                     </div>
-                  </div>
-                </Link>
+                    <div className="p-5">
+                      <h3 className="font-semibold text-lg mb-2 line-clamp-1">{h.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-3 flex items-center gap-1">
+                        <MapPin size={12} /> {h.city_label}
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{h.description}</p>
+                      <div className="flex items-end justify-between border-t border-border/50 pt-4">
+                        <div>
+                          <div className="text-xl font-bold text-primary">{formatPrice(h.price_per_night)}</div>
+                          <div className="text-[10px] text-muted-foreground">/ {tc.per_night}</div>
+                        </div>
+                        <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                          {tc.details} <ArrowRight size={14} />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
               ))}
             </div>
           </>

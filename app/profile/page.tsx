@@ -8,9 +8,18 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { useAuth } from '@/lib/auth-context';
 import { updateProfile, changePassword } from '@/lib/auth-client';
+import { ProtectedRoute } from '@/components/protected-route';
 import { User as UserIcon, Mail, Phone, Globe, LogOut, Save, Lock, Heart, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ProfilePage() {
+  return (
+    <ProtectedRoute>
+      <ProfileContent />
+    </ProtectedRoute>
+  );
+}
+
+function ProfileContent() {
   const router = useRouter();
   const { user, loading, updateUser, logout, isAuthenticated } = useAuth();
   const [saving, setSaving] = useState(false);

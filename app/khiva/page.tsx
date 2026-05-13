@@ -10,6 +10,7 @@ import { getSection } from '@/lib/translations';
 import { getAttractions } from '@/lib/api-client';
 import { Attraction } from '@/lib/types';
 import { MapPin, Star, ArrowRight } from 'lucide-react';
+import { FavoriteButton } from '@/components/favorite-button';
 
 const PLACE_IMAGES: Record<string, string> = {
   'Kalta Minor': '/images/kalta-minor.jpg',
@@ -93,36 +94,47 @@ export default function KhivaPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((a) => (
-              <Link key={a.id} href={`/khiva/${a.id}`} className="glass-card rounded-2xl overflow-hidden group">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={placeImg(a)}
-                    alt={a.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    unoptimized
+              <div key={a.id} className="glass-card rounded-2xl overflow-hidden group relative">
+                <div className="absolute top-3 right-3 z-10">
+                  <FavoriteButton
+                    type="attraction"
+                    id={a.id}
+                    name={a.name}
+                    image={a.cover_image || undefined}
+                    href={`/khiva/${a.id}`}
                   />
-                  <div className="absolute top-4 left-4 text-4xl">{a.icon}</div>
-                  {a.is_featured && (
-                    <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1">
-                      <Star size={10} /> Top
-                    </div>
-                  )}
                 </div>
-                <div className="p-5">
-                  <h3 className="font-serif text-xl font-bold mb-2">{a.name}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-4">{a.description}</p>
-                  <div className="flex items-center justify-between border-t border-border/50 pt-4">
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin size={12} /> {a.latitude.toFixed(3)}, {a.longitude.toFixed(3)}
-                    </p>
-                    <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                      {tc.details} <ArrowRight size={14} />
-                    </span>
+                <Link href={`/khiva/${a.id}`} className="block">
+                  <div className="relative h-56 overflow-hidden">
+                    <Image
+                      src={placeImg(a)}
+                      alt={a.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      unoptimized
+                    />
+                    <div className="absolute top-4 left-4 text-4xl">{a.icon}</div>
+                    {a.is_featured && (
+                      <div className="absolute bottom-4 right-4 bg-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1">
+                        <Star size={10} /> Top
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
+                  <div className="p-5">
+                    <h3 className="font-serif text-xl font-bold mb-2">{a.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4">{a.description}</p>
+                    <div className="flex items-center justify-between border-t border-border/50 pt-4">
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin size={12} /> {a.latitude.toFixed(3)}, {a.longitude.toFixed(3)}
+                      </p>
+                      <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                        {tc.details} <ArrowRight size={14} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         )}

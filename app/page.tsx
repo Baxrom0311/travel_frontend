@@ -8,6 +8,7 @@ import { Footer } from '@/components/footer';
 import { SearchBar } from '@/components/search-bar';
 import { HeroVideo } from '@/components/hero-video';
 import { useI18n } from '@/lib/i18n-context';
+import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
 import { getHomeSummary } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
@@ -17,6 +18,7 @@ import { Landmark, BedDouble, Bus, Calendar, Utensils, Mountain, Newspaper, MapP
 
 export default function Home() {
   const { language } = useI18n();
+  const { user, isAuthenticated } = useAuth();
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [attractions, setAttractions] = useState<Attraction[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
@@ -73,10 +75,19 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
 
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
-          <div className="glass-button inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 animate-in fade-in duration-1000">
-            <Star size={14} className="text-amber-400" />
-            <span className="text-white/90 text-sm font-medium">{t.hero_label}</span>
-          </div>
+          {isAuthenticated && user ? (
+            <div className="glass-button inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 animate-in fade-in duration-1000">
+              <span className="text-amber-400">👋</span>
+              <span className="text-white/90 text-sm font-medium">
+                Assalomu alaykum, {user.full_name.split(' ')[0]}!
+              </span>
+            </div>
+          ) : (
+            <div className="glass-button inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 animate-in fade-in duration-1000">
+              <Star size={14} className="text-amber-400" />
+              <span className="text-white/90 text-sm font-medium">{t.hero_label}</span>
+            </div>
+          )}
           
           <h1 className="font-serif text-6xl md:text-8xl font-bold text-white mb-6 leading-none animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {t.hero_title}

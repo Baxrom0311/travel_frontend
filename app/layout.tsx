@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { I18nProvider } from '@/lib/i18n-context';
 import { AuthProvider } from '@/lib/auth-context';
 import { Toaster } from '@/components/ui/sonner';
+import { ServerStatus } from '@/components/server-status';
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -96,6 +97,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Toaster />
+            <ServerStatus />
           </AuthProvider>
         </I18nProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
