@@ -29,7 +29,7 @@ export default function TransportPage() {
     <div className="min-h-screen">
       <Navbar />
 
-      <section className="relative h-[350px] mt-16 overflow-hidden">
+      <section className="relative h-[350px] overflow-hidden">
         <Image src="/images/caravan.jpg" alt={t.title} fill className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">

@@ -49,7 +49,7 @@ export default function KhivaPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative h-[450px] mt-16 overflow-hidden">
+      <section className="relative h-[450px] overflow-hidden">
         <Image src="/images/khiva-main.jpg" alt="Khiva" fill className="object-cover" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/80" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">

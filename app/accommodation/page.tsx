@@ -51,7 +51,7 @@ export default function AccommodationPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative h-[400px] mt-16 overflow-hidden">
+      <section className="relative h-[400px] overflow-hidden">
         <Image
           src="/images/hotel-traditional.jpg"
           alt={t.title}
