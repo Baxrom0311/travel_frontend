@@ -14,6 +14,7 @@ import { FavoriteButton } from '@/components/favorite-button';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { TiltCard } from '@/components/tilt-card';
 import { NearestPlaces } from '@/components/nearest-places';
+import { AddToTripButton } from '@/components/add-to-trip-button';
 
 const PLACE_IMAGES: Record<string, string> = {
   'Kalta Minor': '/images/kalta-minor.jpg',
@@ -114,7 +115,15 @@ export default function KhivaPage() {
               <StaggerItem key={a.id}>
                 <TiltCard max={8} scale={1.02}>
                   <div className="glass-card rounded-2xl overflow-hidden group relative">
-                    <div className="absolute top-3 right-3 z-10">
+                    <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
+                      <AddToTripButton
+                        type="attraction"
+                        id={a.id}
+                        name={a.name}
+                        image={a.cover_image}
+                        latitude={a.latitude}
+                        longitude={a.longitude}
+                      />
                       <FavoriteButton
                         type="attraction"
                         id={a.id}

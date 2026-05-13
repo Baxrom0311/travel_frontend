@@ -103,6 +103,9 @@ export function Navbar({}: NavbarProps = {}) {
                       <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-foreground/5 text-sm">
                         <Settings size={14} /> Profil
                       </Link>
+                      <Link href="/trip-planner" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-foreground/5 text-sm">
+                        <MapPin size={14} /> {nav.trip_planner}
+                      </Link>
                       <Link href="/favorites" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 hover:bg-foreground/5 text-sm">
                         <Heart size={14} /> Sevimlilar {favCount > 0 && `(${favCount})`}
                       </Link>
@@ -193,6 +196,20 @@ export function Navbar({}: NavbarProps = {}) {
                 </Link>
               );
             })}
+            <Link
+              href="/trip-planner"
+              onClick={() => setIsOpen(false)}
+              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/trip-planner' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
+            >
+              {nav.trip_planner}
+            </Link>
+            <Link
+              href="/tips"
+              onClick={() => setIsOpen(false)}
+              className={`block px-4 py-2 rounded-lg text-sm font-medium transition-colors ${pathname === '/tips' ? 'bg-primary text-primary-foreground' : 'text-foreground/80 hover:bg-foreground/5'}`}
+            >
+              {nav.tips}
+            </Link>
             <Link
               href="/faq"
               onClick={() => setIsOpen(false)}

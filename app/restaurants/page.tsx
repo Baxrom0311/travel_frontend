@@ -9,6 +9,7 @@ import { FavoriteButton } from '@/components/favorite-button';
 import { PriceRange } from '@/components/price-range';
 import { Stagger, StaggerItem, HoverCard } from '@/components/motion';
 import { NearestPlaces } from '@/components/nearest-places';
+import { AddToTripButton } from '@/components/add-to-trip-button';
 import { useI18n } from '@/lib/i18n-context';
 import { getSection } from '@/lib/translations';
 import { getRestaurants, getRestaurantOptions } from '@/lib/api-client';
@@ -117,7 +118,15 @@ export default function RestaurantsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((r) => (
                 <div key={r.id} className="glass-card rounded-2xl overflow-hidden group relative">
-                  <div className="absolute top-3 right-3 z-10">
+                  <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
+                    <AddToTripButton
+                      type="restaurant"
+                      id={r.id}
+                      name={r.name}
+                      image={r.cover_image}
+                      latitude={r.latitude}
+                      longitude={r.longitude}
+                    />
                     <FavoriteButton
                       type="restaurant"
                       id={r.id}

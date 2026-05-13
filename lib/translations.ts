@@ -30,6 +30,8 @@ export const translations = {
     events: { uz: 'Tadbirlar', en: 'Events', ru: 'События' },
     news: { uz: 'Yangiliklar', en: 'News', ru: 'Новости' },
     map: { uz: 'Xarita', en: 'Map', ru: 'Карта' },
+    trip_planner: { uz: 'Sayohat rejasi', en: 'Trip Planner', ru: 'План поездки' },
+    tips: { uz: 'Qo\'llanma', en: 'Travel Tips', ru: 'Советы' },
     faq: { uz: 'FAQ', en: 'FAQ', ru: 'FAQ' },
     contact: { uz: 'Aloqa', en: 'Contact', ru: 'Контакт' },
     favorites: { uz: 'Saqlangan', en: 'Favorites', ru: 'Избранное' },

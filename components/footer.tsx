@@ -19,6 +19,8 @@ export function Footer() {
     { href: '/tours', label: nav.tours },
     { href: '/events', label: nav.events },
     { href: '/map', label: nav.map },
+    { href: '/trip-planner', label: nav.trip_planner },
+    { href: '/tips', label: nav.tips },
     { href: '/faq', label: nav.faq },
     { href: '/contact', label: nav.contact },
   ];
