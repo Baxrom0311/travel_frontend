@@ -26,7 +26,7 @@ export function MapTileLayer() {
     <TileLayer
       key={isDark ? 'dark' : 'light'}
       url={url}
-      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
       maxZoom={19}
       subdomains={['a', 'b', 'c', 'd']}
     />

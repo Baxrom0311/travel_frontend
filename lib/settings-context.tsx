@@ -7,17 +7,17 @@ import { SiteSettings, MapProvider } from '@/lib/settings-types';
 const DEFAULT_MAP: MapProvider = {
   key: 'carto_voyager',
   name: 'CartoDB Voyager',
-  url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  attribution: '&copy; OpenStreetMap &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  max_zoom: 20,
+  url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+  attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>',
+  max_zoom: 19,
 };
 
 const DEFAULT_MAP_DARK: MapProvider = {
   key: 'carto_dark',
   name: 'CartoDB Dark Matter',
-  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  attribution: '&copy; OpenStreetMap &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  max_zoom: 20,
+  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+  attribution: '&copy; <a href="https://carto.com/attributions">CARTO</a>',
+  max_zoom: 19,
 };
 
 const DEFAULT_SETTINGS: SiteSettings = {
