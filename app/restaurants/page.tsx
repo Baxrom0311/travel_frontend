@@ -90,19 +90,19 @@ export default function RestaurantsPage() {
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select value={city} onChange={(e) => setCity(e.target.value)} className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm">
+            <select value={city} onChange={(e) => setCity(e.target.value)} className="h-12 px-4 rounded-xl bg-card text-foreground border border-border focus:border-primary outline-none text-sm">
               <option value="all">{tc.view_all}</option>
               {options?.cities.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
-            <select value={cuisine} onChange={(e) => setCuisine(e.target.value)} className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm">
+            <select value={cuisine} onChange={(e) => setCuisine(e.target.value)} className="h-12 px-4 rounded-xl bg-card text-foreground border border-border focus:border-primary outline-none text-sm">
               <option value="all">{t.all_cuisines}</option>
               {options?.cuisines.map((c) => <option key={c.id} value={c.id.toString()}>{c.icon} {c.name}</option>)}
             </select>
-            <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="h-12 px-4 rounded-xl bg-white border border-border focus:border-primary outline-none text-sm">
+            <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="h-12 px-4 rounded-xl bg-card text-foreground border border-border focus:border-primary outline-none text-sm">
               <option value="all">{t.filter_price}</option>
               {options?.price_ranges.map((p) => <option key={p.value} value={p.value}>{p.value} - {p.label}</option>)}
             </select>
-            <label className="h-12 px-4 rounded-xl bg-white border border-border flex items-center gap-3 cursor-pointer">
+            <label className="h-12 px-4 rounded-xl bg-card text-foreground border border-border flex items-center gap-3 cursor-pointer">
               <input type="checkbox" checked={halalOnly} onChange={(e) => setHalalOnly(e.target.checked)} className="w-4 h-4" />
               <span className="text-sm font-medium">{t.halal}</span>
             </label>

@@ -337,8 +337,69 @@ svg[class*="lucide"] {
   color: var(--primary-foreground) !important;
 }
 
-.dark .leaflet-tile {
-  filter: brightness(0.7) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+/* Dark mode tile filter olib tashlandi - endi CartoDB Dark Matter ishlatamiz */
+
+/* Dark mode color patches - bg-color-50 va text-color-700 dark mode'da */
+.dark .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.18) !important;
+}
+.dark .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.18) !important;
+}
+.dark .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+}
+.dark .bg-yellow-50 {
+  background-color: rgba(234, 179, 8, 0.18) !important;
+}
+.dark .bg-orange-50 {
+  background-color: rgba(249, 115, 22, 0.18) !important;
+}
+.dark .bg-purple-50 {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+}
+.dark .bg-pink-50 {
+  background-color: rgba(236, 72, 153, 0.18) !important;
+}
+
+.dark .text-green-700,
+.dark .text-green-600 {
+  color: rgb(134, 239, 172) !important;
+}
+.dark .text-red-700,
+.dark .text-red-600 {
+  color: rgb(252, 165, 165) !important;
+}
+.dark .text-blue-700,
+.dark .text-blue-600 {
+  color: rgb(147, 197, 253) !important;
+}
+.dark .text-yellow-700,
+.dark .text-yellow-600 {
+  color: rgb(254, 240, 138) !important;
+}
+.dark .text-orange-700,
+.dark .text-orange-600 {
+  color: rgb(254, 215, 170) !important;
+}
+
+/* bg-white selectorlar/cardlar dark mode uchun */
+.dark select.bg-white,
+.dark input.bg-white,
+.dark label.bg-white,
+.dark button.bg-white,
+.dark textarea.bg-white {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+}
+
+/* bg-white inputlar va form elements - umumiy patch */
+.dark input[class*="bg-white"],
+.dark select[class*="bg-white"],
+.dark textarea[class*="bg-white"],
+.dark label[class*="bg-white"] {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
 }
 
 /* Smooth scrollbar */
