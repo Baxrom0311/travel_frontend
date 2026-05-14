@@ -6,6 +6,7 @@ import { X, Calendar, Users, Mail, Phone, User, MessageSquare, CheckCircle2, Sen
 import { formatPrice } from '@/lib/i18n-helpers';
 import { submitContact } from '@/lib/api-client';
 import { useAuth } from '@/lib/auth-context';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import { toast } from 'sonner';
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 
 export function BookingModal({ open, onClose, hotelName, hotelId, pricePerNight }: Props) {
   const { user } = useAuth();
+  useModalScroll(open);
   const today = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
 

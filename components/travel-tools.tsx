@@ -19,7 +19,7 @@ export function TravelTools() {
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed top-1/2 right-4 -translate-y-1/2 z-40 w-12 h-12 rounded-full glass-strong text-primary shadow-xl flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+        className="floating-icon fixed top-1/2 right-4 -translate-y-1/2 z-40 w-12 h-12 rounded-full glass-strong text-primary shadow-xl flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
         aria-label="Travel tools"
       >
         <AnimatePresence mode="wait">
@@ -51,7 +51,7 @@ export function TravelTools() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 40 }}
               transition={{ duration: 0.3 }}
-              className="fixed top-1/2 right-20 -translate-y-1/2 z-40"
+              className="floating-icon fixed top-1/2 right-20 -translate-y-1/2 z-40"
             >
               {/* Tabs */}
               <div className="glass-strong rounded-t-2xl p-2 flex gap-1">

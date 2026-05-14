@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { Navigation, Loader2, AlertCircle, X, MapPin, ArrowRight } from 'lucide-react';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import { sortByDistance, formatDistance, estimateTravelTime, LatLng } from '@/lib/geo';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), {
@@ -36,6 +37,7 @@ interface Props {
 export function NearestPlaces({ items, label = "Eng yaqin joylar", max = 5, className = '' }: Props) {
   const { coords, status, error, request, reset } = useGeolocation();
   const [open, setOpen] = useState(false);
+  useModalScroll(open);
   const [selectedRoute, setSelectedRoute] = useState<NearestItem | null>(null);
 
   const handleClick = () => {

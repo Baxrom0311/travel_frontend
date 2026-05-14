@@ -9,6 +9,7 @@ import { useCompare } from '@/hooks/use-compare';
 import { getHotelById } from '@/lib/api-client';
 import { useI18n } from '@/lib/i18n-context';
 import { formatPrice } from '@/lib/i18n-helpers';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import { Hotel } from '@/lib/types';
 
 export function CompareBar() {
@@ -16,6 +17,7 @@ export function CompareBar() {
   const { language } = useI18n();
   const [hotels, setHotels] = useState<Record<number, Hotel>>({});
   const [showModal, setShowModal] = useState(false);
+  useModalScroll(showModal);
 
   useEffect(() => {
     if (items.length === 0) return;
@@ -44,7 +46,7 @@ export function CompareBar() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 glass-strong rounded-full p-2 flex items-center gap-2 shadow-xl"
+            className="floating-icon fixed bottom-6 left-1/2 -translate-x-1/2 z-40 glass-strong rounded-full p-2 flex items-center gap-2 shadow-xl"
           >
             <div className="flex items-center gap-1 px-3">
               <GitCompare size={16} className="text-primary" strokeWidth={2.5} />

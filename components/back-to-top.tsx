@@ -28,7 +28,7 @@ export function BackToTop() {
           transition={{ duration: 0.2 }}
           whileHover={{ scale: 1.1, y: -4 }}
           whileTap={{ scale: 0.9 }}
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center hover:bg-primary/90 transition-colors"
+          className="floating-icon fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center hover:bg-primary/90 transition-colors"
           aria-label="Back to top"
         >
           <ArrowUp size={20} strokeWidth={2.5} />

@@ -111,7 +111,7 @@ export function LiveChat() {
         onClick={() => setOpen(!open)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent text-white shadow-xl shadow-primary/30 flex items-center justify-center"
+        className="floating-icon fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent text-white shadow-xl shadow-primary/30 flex items-center justify-center"
         aria-label={open ? 'Close chat' : 'Open chat'}
       >
         <AnimatePresence mode="wait">
@@ -153,7 +153,7 @@ export function LiveChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 left-6 z-40 w-[min(400px,calc(100vw-48px))] h-[520px] max-h-[calc(100vh-120px)] glass-strong rounded-2xl flex flex-col overflow-hidden shadow-2xl"
+            className="floating-icon fixed bottom-24 left-6 z-40 w-[min(400px,calc(100vw-48px))] h-[520px] max-h-[calc(100vh-120px)] glass-strong rounded-2xl flex flex-col overflow-hidden shadow-2xl"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-primary to-accent text-white p-4 flex items-center gap-3">

@@ -339,6 +339,13 @@ svg[class*="lucide"] {
 
 /* Dark mode tile filter olib tashlandi - endi CartoDB Dark Matter ishlatamiz */
 
+/* Modal ochilganda fixed iconlar yashirinadi */
+body.modal-active .floating-icon {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s;
+}
+
 /* Dark mode color patches - bg-color-50 va text-color-700 dark mode'da */
 .dark .bg-green-50 {
   background-color: rgba(34, 197, 94, 0.18) !important;
