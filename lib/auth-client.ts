@@ -126,14 +126,20 @@ export async function login(payload: LoginPayload): Promise<{ success: boolean; 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      return { success: false, error: data.detail || "Login xato" };
+      const errorMsg = data.detail || data.error || data.message || 
+        (data.errors ? Object.values(data.errors).flat().join(', ') : null) ||
+        (res.status === 401 ? "Email yoki parol noto'g'ri" : "Login xato");
+      return { success: false, error: errorMsg };
+    }
+    if (!data.access || !data.refresh) {
+      return { success: false, error: 'Server tomonidan token qaytarilmadi' };
     }
     setStoredTokens({ access: data.access, refresh: data.refresh });
     return { success: true, data };
   } catch (e) {
-    return { success: false, error: 'Network error' };
+    return { success: false, error: 'Tarmoq xatosi. Internet ulanishini tekshiring' };
   }
 }
 

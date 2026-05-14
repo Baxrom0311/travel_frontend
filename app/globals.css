@@ -168,11 +168,20 @@
 /* ============ UNIFIED NAVBAR GLASS ============ */
 /* Har doim bir xil - shaffof bg + kuchli blur + kuchli contrast */
 .nav-glass {
-  background: color-mix(in srgb, var(--background) 45%, transparent);
+  background: color-mix(in srgb, var(--background) 75%, transparent);
   backdrop-filter: blur(28px) saturate(220%);
   -webkit-backdrop-filter: blur(28px) saturate(220%);
-  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-  box-shadow: 0 4px 24px color-mix(in srgb, var(--foreground) 6%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  box-shadow: 0 4px 24px color-mix(in srgb, var(--foreground) 8%, transparent);
+}
+
+/* Mobile bottom nav uchun yanada to'yinroq fon - rasmlar ustida o'qishni ta'minlash */
+nav.fixed.bottom-0.nav-glass {
+  background: color-mix(in srgb, var(--background) 92%, transparent);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-top: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
+  box-shadow: 0 -4px 24px color-mix(in srgb, var(--foreground) 12%, transparent);
 }
 
 .glass-button {
@@ -321,6 +330,19 @@ svg[class*="lucide"] {
 .leaflet-container {
   background-color: var(--secondary);
   border-radius: var(--radius);
+  z-index: 0;
+}
+
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-control-container {
+  z-index: 1 !important;
+}
+
+.leaflet-popup-pane,
+.leaflet-tooltip-pane {
+  z-index: 2 !important;
 }
 
 .leaflet-control-zoom-in,
