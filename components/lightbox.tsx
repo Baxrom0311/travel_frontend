@@ -53,6 +53,7 @@ export function Lightbox({ images, initialIndex = 0, open, onClose }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          data-modal="true"
           className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-lg flex items-center justify-center p-4"
           onClick={onClose}
         >

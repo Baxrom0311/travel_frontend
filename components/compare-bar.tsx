@@ -89,6 +89,7 @@ export function CompareBar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            data-modal="true"
             className="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setShowModal(false)}
           >

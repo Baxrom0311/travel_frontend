@@ -186,6 +186,7 @@ export default function RestaurantDetailPage({ params }: { params: Promise<{ id:
       {/* Route modal */}
       {routeOpen && (
         <div
+          data-modal="true"
           className="fixed inset-0 z-[95] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setRouteOpen(false)}
         >

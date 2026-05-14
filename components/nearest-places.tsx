@@ -71,6 +71,7 @@ export function NearestPlaces({ items, label = "Eng yaqin joylar", max = 5, clas
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            data-modal="true"
             className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => { setOpen(false); setSelectedRoute(null); }}
           >

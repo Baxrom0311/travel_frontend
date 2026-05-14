@@ -354,6 +354,15 @@ body.modal-active nav.fixed.bottom-0 {
   transition: opacity 0.2s;
 }
 
+/* Modal ochilganda modal'dan tashqaridagi barcha clicklarni bloklash */
+body.modal-active * {
+  pointer-events: none !important;
+}
+body.modal-active [data-modal="true"],
+body.modal-active [data-modal="true"] * {
+  pointer-events: auto !important;
+}
+
 /* Dark mode color patches - bg-color-50 va text-color-700 dark mode'da */
 .dark .bg-green-50 {
   background-color: rgba(34, 197, 94, 0.18) !important;
