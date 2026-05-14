@@ -346,6 +346,14 @@ body.modal-active .floating-icon {
   transition: opacity 0.2s;
 }
 
+/* Modal ochilganda navbar va mobile bottom nav ham yashirin */
+body.modal-active > nav.fixed.top-0,
+body.modal-active nav.fixed.bottom-0 {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s;
+}
+
 /* Dark mode color patches - bg-color-50 va text-color-700 dark mode'da */
 .dark .bg-green-50 {
   background-color: rgba(34, 197, 94, 0.18) !important;
