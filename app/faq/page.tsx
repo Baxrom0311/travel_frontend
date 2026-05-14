@@ -10,7 +10,7 @@ import { ChevronDown } from 'lucide-react';
 
 const FAQS = {
   uz: [
-    { q: "Xivaga qanday borish mumkin?", a: "Urganch xalqaro aeroportiga parvoz qilib, u yerdan taksi (30-40 daqiqa), avtobus yoki poyezd bilan Xivaga yetib borishingiz mumkin. Yangi aeroport terminali 2024-yilda ochildi." },
+    { q: "Xivaga qanday borish mumkin?", a: "Urganch xalqaro aeroportiga parvoz qilib, u yerdan taksi (30-40 daqiqa), avtobus yoki poyezd bilan Xivaga yetib borishingiz mumkin. Yangi aeroport terminali 2026-yilda ochildi." },
     { q: "Xivaning eng yaxshi fasllari qachon?", a: "Sayohat uchun eng yaxshi vaqt - aprel-may va sentyabr-oktyabr. Yozda (iyun-avgust) juda issiq (40°C+), qishda (dekabr-fevral) sovuq bo'ladi." },
     { q: "Qaysi valyuta ishlatiladi?", a: "O'zbekiston so'mi (UZS). Bank kartalari shaharning ko'p joyida qabul qilinadi. Naqd pul uchun ATM'lar mavjud. Valyuta ayirboshlash shoxobchalari aeroport va bozor yaqinida bor." },
     { q: "Viza kerakmi?", a: "30+ davlat fuqarolari uchun O'zbekistonga viza kerak emas (30 kungacha). Qolganlar uchun e-viza tizimi mavjud. Rasmiy ma'lumot: e-visa.gov.uz" },
@@ -20,7 +20,7 @@ const FAQS = {
     { q: "WiFi bormi?", a: "Ha, aksariyat mehmonxonalar, restoranlar va kafelarda bepul WiFi. Aeroport va vokzalda ham mavjud. SIM karta olsangiz internet xizmati juda arzon." },
   ],
   en: [
-    { q: "How do I get to Khiva?", a: "Fly to Urgench International Airport, then take a taxi (30-40 minutes), bus or train to Khiva. The new airport terminal opened in 2024." },
+    { q: "How do I get to Khiva?", a: "Fly to Urgench International Airport, then take a taxi (30-40 minutes), bus or train to Khiva. The new airport terminal opened in 2026." },
     { q: "What is the best season to visit?", a: "The best time to travel is April-May and September-October. Summer (June-August) is very hot (40°C+), winter (December-February) is cold." },
     { q: "What currency is used?", a: "Uzbek Som (UZS). Bank cards are accepted in most places in the city. ATMs available for cash. Currency exchanges are near the airport and bazaar." },
     { q: "Do I need a visa?", a: "Citizens of 30+ countries don't need a visa to Uzbekistan (up to 30 days). Others can apply for e-visa. Official info: e-visa.gov.uz" },
@@ -30,7 +30,7 @@ const FAQS = {
     { q: "Is there WiFi?", a: "Yes, most hotels, restaurants and cafes have free WiFi. Also available at airport and train station. SIM cards provide affordable internet." },
   ],
   ru: [
-    { q: "Как добраться до Хивы?", a: "Прилетите в Международный аэропорт Ургенча, затем такси (30-40 мин), автобус или поезд. Новый терминал открылся в 2024." },
+    { q: "Как добраться до Хивы?", a: "Прилетите в Международный аэропорт Ургенча, затем такси (30-40 мин), автобус или поезд. Новый терминал открылся в 2026." },
     { q: "Когда лучше посещать?", a: "Лучшее время - апрель-май и сентябрь-октябрь. Летом (июнь-август) очень жарко (40°C+), зимой (декабрь-февраль) холодно." },
     { q: "Какая валюта используется?", a: "Узбекский сум (UZS). Карты принимаются в большинстве мест. Банкоматы есть. Обменники возле аэропорта и базара." },
     { q: "Нужна ли виза?", a: "Гражданам 30+ стран виза не нужна (до 30 дней). Остальные могут оформить e-visa. Подробнее: e-visa.gov.uz" },

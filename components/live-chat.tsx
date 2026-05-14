@@ -41,7 +41,7 @@ function botReply(text: string): string {
   for (const [key, response] of Object.entries(BOT_RESPONSES)) {
     if (lower.includes(key)) return response;
   }
-  return "Ajoyib savol! Batafsil javob uchun https://travel-backend-py8o.onrender.com/api/contact/ orqali bog'laning yoki telefon: +998 61 226 56 56";
+  return "Ajoyib savol! Batafsil javob uchun /contact sahifasi orqali bog'laning yoki telefon: +998 61 226 56 56";
 }
 
 export function LiveChat() {

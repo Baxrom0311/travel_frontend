@@ -168,9 +168,9 @@ export const translations = {
     quick_links: { uz: 'Tezkor havolalar', en: 'Quick Links', ru: 'Быстрые ссылки' },
     contact_us: { uz: "Bog'lanish", en: 'Contact Us', ru: 'Связаться' },
     copyright: {
-      uz: '© 2024 Visit Khorezm. Barcha huquqlar himoyalangan.',
-      en: '© 2024 Visit Khorezm. All rights reserved.',
-      ru: '© 2024 Visit Khorezm. Все права защищены.',
+      uz: '© 2026 Visit Khorezm. Barcha huquqlar himoyalangan.',
+      en: '© 2026 Visit Khorezm. All rights reserved.',
+      ru: '© 2026 Visit Khorezm. Все права защищены.',
     },
     newsletter_title: { uz: 'Yangiliklarga obuna', en: 'Subscribe to Newsletter', ru: 'Подписка' },
     newsletter_desc: {
