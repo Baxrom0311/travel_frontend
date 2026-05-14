@@ -2,47 +2,33 @@
 
 import { TileLayer } from 'react-leaflet';
 import { useTheme } from 'next-themes';
-import { useSettings } from '@/lib/settings-context';
 import { useEffect, useState } from 'react';
 
 /**
- * Dynamic tile layer that:
- * - Reads provider from SiteSettings (admin-controlled)
- * - Switches between light/dark based on theme
- * - SSR-safe (only renders on client)
- * - Auto-fallback to OSM if tile fails
+ * Hardcoded CartoDB tiles:
+ * - Light: Voyager (chiroyli neutral)
+ * - Dark: Dark Matter
+ * Doimo ishonchli ishlaydi.
  */
 export function MapTileLayer() {
-  const { settings } = useSettings();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
 
   useEffect(() => setMounted(true), []);
 
-  // During SSR / first render, use default (light) map
-  const mapConfig = mounted && resolvedTheme === 'dark'
-    ? settings.map_dark
-    : settings.map;
+  const isDark = mounted && resolvedTheme === 'dark';
 
-  // Auto-fallback if too many tile errors (>5)
-  const useFallback = errorCount > 5;
-  const finalUrl = useFallback
-    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
-    : mapConfig.url;
-  const finalAttribution = useFallback
-    ? '&copy; OpenStreetMap &copy; CARTO (fallback)'
-    : mapConfig.attribution;
+  const url = isDark
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
 
   return (
     <TileLayer
-      key={`${mapConfig.key}-${useFallback ? 'fb' : 'main'}`}
-      url={finalUrl}
-      attribution={finalAttribution}
-      maxZoom={mapConfig.max_zoom || 19}
-      eventHandlers={{
-        tileerror: () => setErrorCount((c) => c + 1),
-      }}
+      key={isDark ? 'dark' : 'light'}
+      url={url}
+      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      maxZoom={19}
+      subdomains={['a', 'b', 'c', 'd']}
     />
   );
 }
