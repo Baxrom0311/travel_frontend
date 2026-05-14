@@ -385,6 +385,16 @@ body.modal-active [data-modal="true"] * {
   pointer-events: auto !important;
 }
 
+/* Modal ochilganda card'lardagi absolute tugmalar (sevimli, taqqoslash, +)
+   stacking context bug tufayli modal ustida ko'rinadi - shularni yashirish */
+body.modal-active .absolute.top-3 {
+  visibility: hidden !important;
+}
+body.modal-active [data-modal="true"] .absolute.top-3,
+body.modal-active [data-modal="true"] .absolute {
+  visibility: visible !important;
+}
+
 /* Dark mode color patches - bg-color-50 va text-color-700 dark mode'da */
 .dark .bg-green-50 {
   background-color: rgba(34, 197, 94, 0.18) !important;
