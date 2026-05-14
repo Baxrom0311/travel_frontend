@@ -216,3 +216,30 @@ export async function submitContact(data: ContactMessage): Promise<ContactRespon
     return { success: false };
   }
 }
+
+
+// ═══════════════════════════════════════════════════════════════
+// Testimonials
+// ═══════════════════════════════════════════════════════════════
+export interface Testimonial {
+  id: number;
+  name: string;
+  country: string;
+  role: string;
+  rating: number;
+  text_uz: string;
+  text_en: string;
+  text_ru: string;
+  avatar_url: string | null;
+  is_featured: boolean;
+  order: number;
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  try {
+    const data = await getJson<Testimonial[]>('/testimonials/');
+    return data;
+  } catch {
+    return [];
+  }
+}

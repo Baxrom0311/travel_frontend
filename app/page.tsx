@@ -18,7 +18,7 @@ import { VideoHoverCard } from '@/components/video-hover-card';
 import { useI18n } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { getSection } from '@/lib/translations';
-import { getHomeSummary } from '@/lib/api-client';
+import { getHomeSummary, getTestimonials, Testimonial as ApiTestimonial } from '@/lib/api-client';
 import { FALLBACK_IMAGES } from '@/lib/constants';
 import { formatPrice } from '@/lib/i18n-helpers';
 import { Attraction, Hotel, Event, News, Restaurant, Tour, StatsData } from '@/lib/types';
@@ -34,6 +34,7 @@ export default function Home() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [tours, setTours] = useState<Tour[]>([]);
   const [stats, setStats] = useState<StatsData>({});
+  const [apiTestimonials, setApiTestimonials] = useState<ApiTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   const t = getSection('home', language);
@@ -43,7 +44,10 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const data = await getHomeSummary(language);
+      const [data, ts] = await Promise.all([
+        getHomeSummary(language),
+        getTestimonials(),
+      ]);
       setHotels(data?.featured_hotels ?? []);
       setAttractions(data?.attractions ?? []);
       setEvents(data?.events ?? []);
@@ -51,6 +55,7 @@ export default function Home() {
       setRestaurants(data?.restaurants ?? []);
       setTours(data?.tours ?? []);
       setStats(data?.stats ?? {});
+      setApiTestimonials(ts);
       setLoading(false);
     })();
   }, [language]);
@@ -64,7 +69,22 @@ export default function Home() {
     { icon: Calendar, label: tcat.events, count: stats.total_events ?? 0, suffix: tcat.events_count, href: '/events', gradient: 'from-pink-500 to-rose-500' },
   ];
 
-  const testimonials: Testimonial[] = [
+  // API'dan kelgan sharhlar (yoki fallback hardcoded)
+  const testimonials: Testimonial[] = apiTestimonials.length > 0
+    ? apiTestimonials.map((t) => ({
+        id: t.id,
+        name: t.name,
+        country: t.country,
+        role: t.role,
+        rating: t.rating,
+        text: language === 'en'
+          ? (t.text_en || t.text_uz)
+          : language === 'ru'
+          ? (t.text_ru || t.text_uz)
+          : t.text_uz,
+        avatar: t.avatar_url || undefined,
+      }))
+    : [
     {
       id: 1,
       name: 'Sarah Johnson',
