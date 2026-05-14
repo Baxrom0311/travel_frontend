@@ -10,6 +10,7 @@ import { FavoriteButton } from '@/components/favorite-button';
 import { ReviewsSection } from '@/components/reviews-section';
 import { PriceRange } from '@/components/price-range';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import dynamic from 'next/dynamic';
 
 const RouteMap = dynamic(() => import('@/components/route-map').then((m) => m.RouteMap), { ssr: false });
@@ -27,6 +28,7 @@ export default function RestaurantDetailPage({ params }: { params: Promise<{ id:
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [routeOpen, setRouteOpen] = useState(false);
+  useModalScroll(routeOpen);
   const { coords: userCoords, status: geoStatus, request: requestGeo } = useGeolocation();
   const tc = getSection('common', language);
   const tr = getSection('restaurants', language);

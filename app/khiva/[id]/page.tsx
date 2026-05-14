@@ -18,6 +18,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Lightbox } from '@/components/lightbox';
 import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import { JsonLd, touristAttractionSchema, breadcrumbSchema } from '@/components/structured-data';
 import dynamic from 'next/dynamic';
 
@@ -33,6 +34,7 @@ export default function AttractionDetailPage({ params }: { params: Promise<{ id:
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [routeOpen, setRouteOpen] = useState(false);
+  useModalScroll(routeOpen);
   const { coords: userCoords, status: geoStatus, request: requestGeo } = useGeolocation();
 
   const t = getSection('khiva', language);

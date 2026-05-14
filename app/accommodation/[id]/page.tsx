@@ -19,6 +19,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Lightbox } from '@/components/lightbox';
 import { ShareButtons } from '@/components/share-buttons';
 import { useGeolocation } from '@/hooks/use-geolocation';
+import { useModalScroll } from '@/hooks/use-modal-scroll';
 import { BookingModal } from '@/components/booking-modal';
 import { JsonLd, hotelSchema, breadcrumbSchema } from '@/components/structured-data';
 import { ExternalBookingLinks } from '@/components/external-booking-links';
@@ -38,6 +39,7 @@ export default function HotelDetailPage({ params }: { params: Promise<{ id: stri
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [routeOpen, setRouteOpen] = useState(false);
+  useModalScroll(routeOpen);
   const [bookingOpen, setBookingOpen] = useState(false);
   const { coords: userCoords, status: geoStatus, request: requestGeo } = useGeolocation();
 

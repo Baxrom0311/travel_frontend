@@ -34,9 +34,12 @@ export function Lightbox({ images, initialIndex = 0, open, onClose }: Props) {
     };
     document.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-active');
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
+      const stillOpen = document.querySelector('[data-modal-open="true"]');
+      if (!stillOpen) document.body.classList.remove('modal-active');
     };
   }, [open, index]);
 
