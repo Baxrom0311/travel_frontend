@@ -16,6 +16,8 @@ const nextConfig = {
       { protocol: 'http', hostname: 'localhost', port: '8000' },
       { protocol: 'https', hostname: 'visitkhorezm.uz' },
       { protocol: 'https', hostname: 'travel-backend-py8o.onrender.com' },
+      { protocol: 'https', hostname: 'p01--dash--h6d9y95gwrff.code.run' },
+      { protocol: 'https', hostname: '*.code.run' },
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
     ],
     formats: ['image/avif', 'image/webp'],
